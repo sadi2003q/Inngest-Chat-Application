@@ -5,8 +5,8 @@ import { MessageCircle, Settings, Trash2 } from "lucide-react"
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import { useRef, useEffect } from "react";
-
+import React, { useRef, useEffect } from "react";
+import {TAG_COLORS} from "./utilities.ts";
 
 export const ChatHeader = ({
                                name,
@@ -205,22 +205,39 @@ export const MessageSendButton = ({showMessage}:{
     );
 }
 
-const MessageBubble = ({
-                                  text,
-                                  isSent = true, // true = user sent, false = received
-                              }: {
-    text: string;
-    isSent?: boolean;
-}) => {
+
+const ReceivedMessage = ({ text }: { text: string }) => {
     return (
-        <div className={`flex ${isSent ? 'justify-end' : 'justify-start'} w-full my-1`}>
+        <div className="flex justify-start w-full my-2">
             <div
-                className={`
-                    max-w-xs sm:max-w-md px-4 py-2 rounded-2xl break-words
-                    ${isSent ? 'bg-green-500 text-white rounded-br-none' : 'bg-gray-700 text-white rounded-bl-none'}
-                    
-                `}
-                style={{ whiteSpace: 'pre-wrap' }}
+                className="
+                    max-w-3xl
+                    text-white
+                    text-sm sm:text-base
+                    leading-relaxed
+                "
+                style={{ whiteSpace: "pre-wrap" }}
+            >
+                {text}
+            </div>
+        </div>
+    );
+};
+
+const MessageBubble = ({ text }: { text: string }) => {
+    return (
+        <div className="flex justify-end w-full my-1">
+            <div
+                className="
+                    max-w-xs sm:max-w-md
+                    px-4 py-2
+                    rounded-2xl
+                    bg-green-500
+                    text-white
+                    rounded-br-none
+                    break-words
+                "
+                style={{ whiteSpace: "pre-wrap" }}
             >
                 {text}
             </div>
@@ -236,19 +253,178 @@ export const ChatWindow = ({
 }) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Scroll to bottom whenever messages change
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
     return (
         <div className="flex-1 w-full max-w-4xl px-4 py-2 overflow-y-auto">
+            {messages.map((msg, index) =>
+                msg.isSent ? (
+                    <MessageBubble key={index} text={msg.text} />
+                ) : (
+                    <ReceivedMessage key={index} text={msg.text} />
+                )
+            )}
 
-
-        {messages.map((msg, index) => (
-                <MessageBubble key={index} text={msg.text} isSent={msg.isSent} />
-            ))}
             <div ref={messagesEndRef} />
         </div>
     );
 };
+
+
+
+
+
+export const AIHeading = ({ text }: { text: string }) => (
+    <h1 className="text-2xl font-bold text-white my-4">
+        {text}
+    </h1>
+);
+
+export const AIIntroduction = ({ text }: { text: string }) => (
+    <p className="text-white/90 leading-relaxed my-2">
+        {text}
+    </p>
+);
+
+export const AICodeBlock = ({ code }: { code: string }) => (
+    <pre className="bg-gray-900 text-green-400 p-4 rounded-lg my-4 overflow-x-auto text-sm">
+        <code>{code}</code>
+    </pre>
+);
+
+export const AIImage = ({ src, alt }: { src: string; alt?: string }) => (
+    <img
+        src={src}
+        alt={alt}
+        className="rounded-xl my-4 max-w-full"
+    />
+);
+
+
+export const AIYouTube = ({ embedId }: { embedId: string }) => (
+    <div className="aspect-video my-4">
+        <iframe
+            className="w-full h-full rounded-xl"
+            src={`https://www.youtube.com/embed/${embedId}`}
+            allowFullScreen
+        />
+    </div>
+);
+
+
+export const AILink = ({ label, href }: { label: string; href: string }) => (
+    <a
+        href={href}
+        target="_blank"
+        className="text-green-400 underline my-2 inline-block"
+    >
+        {label}
+    </a>
+);
+
+
+export const AIPoints = ({ points }: { points: string[] }) => (
+    <ul className="list-disc list-inside text-white/90 my-3 space-y-1">
+        {points.map((p, i) => <li key={i}>{p}</li>)}
+    </ul>
+);
+
+export const AIQuote = ({ text }: { text: string }) => (
+    <blockquote className="border-l-4 border-green-500 pl-4 italic text-white/80 my-4">
+        {text}
+    </blockquote>
+);
+
+export const AIDefinition = ({ term, meaning }: { term: string; meaning: string }) => (
+    <p className="text-white my-2">
+        <strong>{term}:</strong> {meaning}
+    </p>
+);
+
+export const AIWarning = ({ text }: { text: string }) => (
+    <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-lg my-4">
+        ⚠️ {text}
+    </div>
+);
+
+export const AITips = ({ tips }: { tips: string[] }) => (
+    <div className="bg-green-500/10 p-3 rounded-lg my-4">
+        <ul className="list-disc list-inside text-green-300 space-y-1">
+            {tips.map((t, i) => <li key={i}>{t}</li>)}
+        </ul>
+    </div>
+);
+
+
+
+export const AITags = ({ tags }: { tags: string[] }) => (
+    <div className="flex flex-wrap gap-2 my-3">
+        {tags.map((tag, index) => (
+            <span
+                key={index}
+                className={`
+                    px-2.5 py-1
+                    text-xs font-medium
+                    rounded-md
+                    border
+                    ${TAG_COLORS[index % TAG_COLORS.length]}
+                `}
+            >
+                {tag}
+            </span>
+        ))}
+    </div>
+);
+
+
+
+export const AITable = ({
+                            headers,
+                            rows,
+                        }: {
+    headers: string[];
+    rows: string[][];
+}) => (
+    <table className="w-full text-white my-4 border border-white/10">
+        <thead>
+        <tr>
+            {headers.map((h, i) => (
+                <th key={i} className="border px-3 py-2">
+                    {h}
+                </th>
+            ))}
+        </tr>
+        </thead>
+        <tbody>
+        {rows.map((row, i) => (
+            <tr key={i}>
+                {row.map((cell, j) => (
+                    <td key={j} className="border px-3 py-2">
+                        {cell}
+                    </td>
+                ))}
+            </tr>
+        ))}
+        </tbody>
+    </table>
+);
+
+export const AISteps = ({ steps }: { steps: string[] }) => (
+    <ol className="list-decimal list-inside text-white my-3 space-y-1">
+        {steps.map((s, i) => <li key={i}>{s}</li>)}
+    </ol>
+);
+
+export const AISummary = ({ text }: { text: string }) => (
+    <div className="border-t border-white/10 pt-3 mt-6 text-white/80">
+        <strong>Summary:</strong> {text}
+    </div>
+);
+
+export const AIFooter = ({ text }: { text: string }) => (
+    <div className="text-xs text-white/40 mt-4">
+        {text}
+    </div>
+);
