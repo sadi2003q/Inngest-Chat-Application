@@ -1,14 +1,15 @@
 // Filepath: src/chat_interface.tsx
 
-import {useState} from "react";
+import { useState } from "react";
 
 import {
     ChatHeader,
     MessageSendButton,
     MessageSendField,
-    ChatWindow
-} from "./chat_interface.componant.tsx";
-import type {AIResponse} from './model.aiResponse.ts';
+    ChatWindow,
+} from "./chat_interface.componant";
+import type { AIResponse, Message } from "./model.aiResponse";
+
 
 const demoAIResponse: AIResponse = {
     heading: "Deadlock in Operating Systems",
@@ -21,32 +22,47 @@ const demoAIResponse: AIResponse = {
         meaning: "A condition where no process can proceed execution.",
     },
 
-    points: [
-        "Occurs in multi-process environments",
-        "Processes wait indefinitely",
-        "System throughput becomes zero",
-    ],
+    points: {
+        heading: 'Something',
+        point: [
+            "Occurs in multi-process environments",
+            "Processes wait indefinitely",
+            "System throughput becomes zero",
+]
+    },
 
-    steps: [
-        "Process requests resource",
-        "Resource is held",
-        "Another resource is requested",
-        "Circular wait forms",
-    ],
+    steps: {
+        heading: 'Heading',
+        point: [
+            "Process requests resource",
+            "Resource is held",
+            "Another resource is requested",
+            "Circular wait forms",
+        ]
 
-    warning: "Deadlocks can freeze mission-critical systems.",
+    },
+
+    warning: {
+        heading: "Warning",
+        text:  "Deadlocks can freeze mission-critical systems.",
+    },
+
+    tips: {
+        heading: "Tips",
+        text:  "Deadlocks can freeze mission-critical systems.",
+    },
 
     code: `while(true) {
-    wait();
+  wait();
 }`,
 
     table: {
-        headers: ["Condition", "Required"],
+        headers: ["Condition", "Required", "Condition", "Required"],
         rows: [
-            ["Mutual Exclusion", "Yes"],
-            ["Hold and Wait", "Yes"],
-            ["No Preemption", "Yes"],
-            ["Circular Wait", "Yes"],
+            ["Mutual Exclusion", "Yes", "Mutual Exclusion", "Yes"],
+            ["Hold and Wait", "Yes", "Mutual Exclusion", "Yes"],
+            ["No Preemption", "Yes", "Mutual Exclusion", "Yes"],
+            ["Circular Wait", "Yes", "Mutual Exclusion", "Yes"],
         ],
     },
 
@@ -56,76 +72,52 @@ const demoAIResponse: AIResponse = {
 };
 
 
+
+
+// ---------------- COMPONENT ----------------
 export default function ChatInterface() {
 
-    const [textFieldMessage, setTextFieldMessage] = useState<string>('');
-    type Message =
-        | { type: "user"; text: string }
-        | { type: "ai-text"; text: string }
-        | { type: "ai-structured"; data: typeof AIResponse };
-
+    const [textFieldMessage, setTextFieldMessage] = useState("");
     const [messages, setMessages] = useState<Message[]>([]);
 
 
-    const showMessage = () => {
-        if (!textFieldMessage) return;
 
-        // Add user's message
-        setMessages((prev) => [...prev, { text: textFieldMessage, isSent: true }]);
+
+    const showMessage = () => {
+        if (!textFieldMessage.trim()) return;
+
+        // user message
+        setMessages((prev) => [
+            ...prev,
+            { type: "user", text: textFieldMessage },
+        ]);
+
         setTextFieldMessage("");
 
-        // Simulate a received reply after 1 second
+        // simulated AI structured response
         setTimeout(() => {
             setMessages((prev) => [
                 ...prev,
-                { text: "This is a simulated reply!", isSent: false },
+                { type: "ai-structured", data: demoAIResponse },
             ]);
         }, 1000);
     };
 
-    return (
-        <div className={'w-screen h-screen bg-black text-white align-middle flex flex-col items-center justify-center py-3'}>
 
-            <ChatHeader name={"MD. Adnan Abdullah Sadi"} subtext={"User"}/>
+    return (
+        <div className="w-screen h-screen bg-black text-white flex flex-col items-center justify-center py-3">
+            <ChatHeader name={"MD. Adnan Abdullah Sadi"} subtext={"User"} />
 
             <ChatWindow messages={messages} />
 
+            <div className="flex items-center justify-center gap-2 w-screen pb-6">
+                <MessageSendField
+                    textFieldMessage={textFieldMessage}
+                    setTextFieldMessage={setTextFieldMessage}
+                />
 
-            <div className={'flex items-center justify-center gap-2 w-screen pb-6'}>
-                <MessageSendField textFieldMessage={textFieldMessage} setTextFieldMessage={setTextFieldMessage}/>
-
-                <MessageSendButton showMessage={showMessage}/>
-
+                <MessageSendButton showMessage={showMessage} />
             </div>
-
-
-
         </div>
     );
-
-
 }
-
-/*
----Compulsory---
-Heading
-introduction
-tag
-footer
-summary
-
----Optional---
-code section
-image
-YouTube video like
-MediaWiki, website link
-point
-quote
-definition
-point
-warning
-tips
-table
-steps
-
- */

@@ -10,11 +10,25 @@ export interface AIResponse {
         meaning: string;
     };
 
-    points?: string[];
-    steps?: string[];
+    description?: string;
 
-    warning?: string;
-    tips?: string[];
+    points?: {
+        heading: string,
+        point: string[];
+    }
+    steps?: {
+        heading: string,
+        point: string[];
+    }
+
+    warning?: {
+        heading: string,
+        text: string;
+    }
+    tips?: {
+        heading: string,
+        text: string;
+    }
 
     code?: string;
 
@@ -23,6 +37,17 @@ export interface AIResponse {
         rows: string[][];
     };
 
+    quotes?: {
+        from: string;
+        text: string;
+    }
+
     summary: string;
     footer: string;
 }
+
+
+export type Message =
+    | { type: "user"; text: string }
+    | { type: "ai-text"; text: string }
+    | { type: "ai-structured"; data: AIResponse };

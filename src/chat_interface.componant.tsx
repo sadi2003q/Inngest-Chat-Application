@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import React, { useRef, useEffect } from "react";
 import {TAG_COLORS} from "./utilities.ts";
+import type {AIResponse, Message} from "./model.aiResponse.ts";
 
 export const ChatHeader = ({
                                name,
@@ -249,7 +250,7 @@ const MessageBubble = ({ text }: { text: string }) => {
 export const ChatWindow = ({
                                messages,
                            }: {
-    messages: { text: string; isSent: boolean }[];
+    messages: Message[];
 }) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -259,13 +260,23 @@ export const ChatWindow = ({
 
     return (
         <div className="flex-1 w-full max-w-4xl px-4 py-2 overflow-y-auto">
-            {messages.map((msg, index) =>
-                msg.isSent ? (
-                    <MessageBubble key={index} text={msg.text} />
-                ) : (
-                    <ReceivedMessage key={index} text={msg.text} />
-                )
-            )}
+            {messages.map((msg, index) => {
+                if (msg.type === "user") {
+                    return <MessageBubble key={index} text={msg.text} />;
+                }
+
+                if (msg.type === "ai-text") {
+                    return <ReceivedMessage key={index} text={msg.text} />;
+                }
+
+                if (msg.type === "ai-structured") {
+                    return (
+                        <AIMessageRenderer key={index} data={msg.data} />
+                    );
+                }
+
+                return null;
+            })}
 
             <div ref={messagesEndRef} />
         </div>
@@ -274,6 +285,37 @@ export const ChatWindow = ({
 
 
 
+const AIMessageRenderer = ({ data }: { data: AIResponse }) => {
+    return (
+        <div className="my-4 space-y-3">
+            <AIHeading text={data.heading} />
+            <AIIntroduction text={data.introduction} />
+            <AITags tags={data.tags} />
+
+            {data.definition && (
+                <AIDefinition
+                    term={data.definition.term}
+                    meaning={data.definition.meaning}
+                />
+            )}
+
+            {data.points && <AIPoints data={data.points} />}
+
+            {data.steps && <AISteps data={data.steps} />}
+
+            {data.code && <AICodeBlock code={data.code} />}
+
+            {data.warning && <AIWarning data={data.warning} />}
+
+            {data.table && (
+                <AITable headers={data.table.headers} rows={data.table.rows} />
+            )}
+
+            <AISummary text={data.summary} />
+            <AIFooter text={data.footer} />
+        </div>
+    );
+};
 
 
 export const AIHeading = ({ text }: { text: string }) => (
@@ -325,17 +367,49 @@ export const AILink = ({ label, href }: { label: string; href: string }) => (
 );
 
 
-export const AIPoints = ({ points }: { points: string[] }) => (
-    <ul className="list-disc list-inside text-white/90 my-3 space-y-1">
-        {points.map((p, i) => <li key={i}>{p}</li>)}
-    </ul>
+// Individual UI Components
+export const AIPoints = ({ data }: { data: { heading: string; point: string[] } }) => (
+    <div className="my-4">
+        <h3 className="text-lg font-semibold text-white mb-2">{data.heading}</h3>
+        <ul className="list-disc list-inside text-white/90 space-y-1">
+            {data.point.map((p, i) => <li key={i}>{p}</li>)}
+        </ul>
+    </div>
 );
 
-export const AIQuote = ({ text }: { text: string }) => (
-    <blockquote className="border-l-4 border-green-500 pl-4 italic text-white/80 my-4">
-        {text}
+export const AISteps = ({ data }: { data: { heading: string; point: string[] } }) => (
+    <div className="my-4">
+        <h3 className="text-lg font-semibold text-white mb-2">{data.heading}</h3>
+        <ol className="list-decimal list-inside text-white space-y-1">
+            {data.point.map((s, i) => <li key={i}>{s}</li>)}
+        </ol>
+    </div>
+);
+
+export const AITips = ({ data }: { data: { heading: string; text: string } }) => (
+    <div className="bg-green-500/10 p-4 rounded-lg my-4 border border-green-500/20">
+        <h4 className="text-green-400 font-bold mb-1">{data.heading}</h4>
+        <p className="text-green-300/90 italic">{data.text}</p>
+    </div>
+);
+
+export const AIWarning = ({ data }: { data: { heading: string; text: string } }) => (
+    <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-lg my-4">
+        <div className="font-bold flex items-center gap-2 mb-1">
+            ⚠️ {data.heading}
+        </div>
+        <p className="text-red-300/80">{data.text}</p>
+    </div>
+);
+
+export const AIQuote = ({ data }: { data: { from: string; text: string } }) => (
+    <blockquote className="border-l-4 border-green-500 pl-4 my-6">
+        <p className="italic text-white/80 text-lg">"{data.text}"</p>
+        <cite className="text-white/50 block mt-2 text-sm">— {data.from}</cite>
     </blockquote>
 );
+
+
 
 export const AIDefinition = ({ term, meaning }: { term: string; meaning: string }) => (
     <p className="text-white my-2">
@@ -343,19 +417,7 @@ export const AIDefinition = ({ term, meaning }: { term: string; meaning: string 
     </p>
 );
 
-export const AIWarning = ({ text }: { text: string }) => (
-    <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-lg my-4">
-        ⚠️ {text}
-    </div>
-);
 
-export const AITips = ({ tips }: { tips: string[] }) => (
-    <div className="bg-green-500/10 p-3 rounded-lg my-4">
-        <ul className="list-disc list-inside text-green-300 space-y-1">
-            {tips.map((t, i) => <li key={i}>{t}</li>)}
-        </ul>
-    </div>
-);
 
 
 
@@ -411,11 +473,6 @@ export const AITable = ({
     </table>
 );
 
-export const AISteps = ({ steps }: { steps: string[] }) => (
-    <ol className="list-decimal list-inside text-white my-3 space-y-1">
-        {steps.map((s, i) => <li key={i}>{s}</li>)}
-    </ol>
-);
 
 export const AISummary = ({ text }: { text: string }) => (
     <div className="border-t border-white/10 pt-3 mt-6 text-white/80">
