@@ -1,22 +1,98 @@
-import 'dotenv/config'
 import { GoogleGenAI } from "@google/genai";
+import type { AIResponse } from "./model.aiResponse.ts";
 
 const ai = new GoogleGenAI({
-    apiKey: process.env.GOOGLE_API_KEY,
+    apiKey: 'AIzaSyB12uiAINqFb-FMll-LoYcxcFC2DN1UCBk',
 });
 
-const aiResponse = async ({ question }: { question: string }) => {
+const SYSTEM_PROMPT = `
+You are an AI content generator.
+
+Return your response ONLY as valid JSON.
+Do NOT include markdown, comments, or extra text.
+
+Follow this exact TypeScript interface:
+
+{
+  "heading": string,
+  "introduction": string,
+  "tags": string[],
+
+  "definition"?: {
+    "term": string,
+    "meaning": string
+  },
+
+  "description"?: string,
+
+  "points"?: {
+    "heading": string,
+    "point": string[]
+  },
+
+  "steps"?: {
+    "heading": string,
+    "point": string[]
+  },
+
+  "warning"?: {
+    "heading": string,
+    "text": string
+  },
+
+  "tips"?: {
+    "heading": string,
+    "text": string
+  },
+
+  "code"?: string,
+
+  "table"?: {
+    "headers": string[],
+    "rows": string[][]
+  },
+
+  "quotes"?: {
+    "from": string,
+    "text": string
+  },
+
+  "summary": string,
+  "footer": string
+}
+
+Rules:
+- Include ONLY fields relevant to the question
+- Omit irrelevant optional fields completely
+- All strings must be plain text
+- Arrays must never be null
+- code field must be raw code as a string (no markdown)
+`;
+
+export const aiResponse = async (
+    { question }: { question: string }
+): Promise<AIResponse> => {
+
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
-        contents: question,
+        contents: [
+            {
+                // ✅ Gemini "system prompt"
+                role: "model",
+                parts: [{ text: SYSTEM_PROMPT }]
+            }
+        ],
     });
 
-    // ✅ Extract actual AI text
-    const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
+    const rawText =
+        response.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    console.log(text);
+    if (!rawText) {
+        throw new Error("Empty AI response");
+    }
+
+    return JSON.parse(rawText);
 };
 
-aiResponse({
-    question: "What is science",
-});
+const result = await aiResponse({ question: "What is science?" });
+console.log(result);
