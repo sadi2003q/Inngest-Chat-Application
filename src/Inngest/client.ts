@@ -2,5 +2,5 @@ import {Inngest} from "inngest";
 
 
 export const inngest = new Inngest({
-    id: "chatbot-inngest",
+    id: "chatbot-ingest",
 })

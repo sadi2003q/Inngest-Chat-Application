@@ -12,6 +12,10 @@ export const generateTag = inngest.createFunction(
 
         const question = event.data.question;
 
+        await step.run(() =>  {
+
+        })
+
 
 
 
