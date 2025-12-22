@@ -6,13 +6,17 @@ import React from "react";
 
 export class ChatController {
     private readonly setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+    private readonly setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 
     constructor({
-                    setMessages,
-                }: {
-        setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+        setMessages,
+        setIsLoading,
+    }: {
+        setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+        setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
     }) {
         this.setMessages = setMessages;
+        this.setIsLoading = setIsLoading;
     }
 
     // Method to send a question and get AI response
@@ -27,6 +31,8 @@ export class ChatController {
             };
 
             this.setMessages((prev) => [...prev, userMessage]);
+            this.setIsLoading(true) // Loading Starts
+
 
             // 2️⃣ Call AI (replace aiResponse with your actual API call)
             const response: AIResponse = await aiResponse({ question });
@@ -37,6 +43,7 @@ export class ChatController {
                 data: response,
             };
 
+            this.setIsLoading(false); // Loading ends
             this.setMessages((prev) => [...prev, aiMessage]);
 
             return {
@@ -44,7 +51,7 @@ export class ChatController {
             };
         } catch (error) {
             console.error("Error fetching AI response:", error);
-
+            this.setIsLoading(false);
             // Optionally show an AI error message
             const errorMessage: Message = {
                 type: "ai-text",

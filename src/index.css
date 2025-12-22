@@ -51,3 +51,12 @@ body {
 *::-webkit-scrollbar-thumb:hover {
     background-color: var(--scrollbar-thumb-hover);
 }
+
+
+.dot {
+    width: 6px;
+    height: 6px;
+    background-color: #9ca3af; /* gray-400 */
+    border-radius: 9999px;
+}
+

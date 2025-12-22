@@ -1,9 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 import type { AIResponse } from "./model.aiResponse.ts";
-// import {VITE_GEMINI_API_KEY} from '/.env'
+import {GEMINI_secret} from "./secret.ts";
 
 const ai = new GoogleGenAI({
-    apiKey: ''
+    apiKey: GEMINI_secret
 });
 
 

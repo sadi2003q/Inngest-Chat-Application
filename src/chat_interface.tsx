@@ -21,8 +21,9 @@ export default function ChatInterface() {
 
     const [textFieldMessage, setTextFieldMessage] = useState("");
     const [messages, setMessages] = useState<Message[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const controller = new ChatController({setMessages: setMessages});
+    const controller = new ChatController({setMessages: setMessages, setIsLoading: setIsLoading});
 
 
     const showMessage = () => {
@@ -44,7 +45,7 @@ export default function ChatInterface() {
         <div className="w-screen h-screen bg-black text-white flex flex-col items-center justify-center py-3">
             <ChatHeader name={"MD. Adnan Abdullah Sadi"} subtext={"User"} />
 
-            <ChatWindow messages={messages} />
+            <ChatWindow messages={messages} isLoading={isLoading} />
 
             <div className="flex items-center justify-center gap-2 w-screen pb-6">
                 <MessageSendField

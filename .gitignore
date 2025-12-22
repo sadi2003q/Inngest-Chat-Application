@@ -13,6 +13,9 @@ dist-ssr
 *.local
 src/.env
 src/*.env
+src/secret.ts
+
+
 *.env
 .env
 # Editor directories and files

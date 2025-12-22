@@ -248,10 +248,12 @@ const MessageBubble = ({ text }: { text: string }) => {
 
 
 export const ChatWindow = ({
-                               messages,
-                           }: {
+        messages,
+        isLoading
+    }: {
     messages: Message[];
-}) => {
+    isLoading: boolean;
+    }) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -278,10 +280,30 @@ export const ChatWindow = ({
                 return null;
             })}
 
+            {isLoading && (
+                <div className="flex justify-start mb-2">
+                    <TypingIndicator />
+                </div>
+            )}
+
             <div ref={messagesEndRef} />
         </div>
     );
 };
+
+
+export const TypingIndicator = () => {
+    return (
+        <div className="flex items-center gap-2 max-w-xs">
+            <div className="bg-gray-800 rounded-2xl px-4 py-2 flex gap-1">
+                <span className="dot animate-bounce [animation-delay:0ms]" />
+                <span className="dot animate-bounce [animation-delay:150ms]" />
+                <span className="dot animate-bounce [animation-delay:300ms]" />
+            </div>
+        </div>
+    );
+};
+
 
 
 
