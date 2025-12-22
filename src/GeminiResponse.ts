@@ -1,9 +1,12 @@
 import { GoogleGenAI } from "@google/genai";
 import type { AIResponse } from "./model.aiResponse.ts";
+// import {VITE_GEMINI_API_KEY} from '/.env'
 
 const ai = new GoogleGenAI({
-    apiKey: 'AIzaSyB12uiAINqFb-FMll-LoYcxcFC2DN1UCBk',
+    apiKey: ''
 });
+
+
 
 const SYSTEM_PROMPT = `
 You are an AI content generator.
@@ -77,9 +80,10 @@ export const aiResponse = async (
         model: "gemini-2.5-flash",
         contents: [
             {
-                // ✅ Gemini "system prompt"
-                role: "model",
-                parts: [{ text: SYSTEM_PROMPT }]
+                role: "user",
+                parts: [{
+                    text: `${SYSTEM_PROMPT}\n\nQuestion:\n${question}`
+                }]
             }
         ],
     });
@@ -94,5 +98,5 @@ export const aiResponse = async (
     return JSON.parse(rawText);
 };
 
-const result = await aiResponse({ question: "What is science?" });
-console.log(result);
+// const result = await aiResponse({ question: "What is science?" });
+// console.log(result);

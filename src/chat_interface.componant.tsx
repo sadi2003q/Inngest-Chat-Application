@@ -336,6 +336,9 @@ export const AICodeBlock = ({ code }: { code: string }) => (
     </pre>
 );
 
+
+
+
 export const AIImage = ({ src, alt }: { src: string; alt?: string }) => (
     <img
         src={src}

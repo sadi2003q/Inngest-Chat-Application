@@ -28,11 +28,6 @@ export default function ChatInterface() {
     const showMessage = () => {
         if (!textFieldMessage.trim()) return;
 
-        // user message
-        setMessages((prev) => [
-            ...prev,
-            { type: "user", text: textFieldMessage },
-        ]);
 
         setTextFieldMessage("");
 
