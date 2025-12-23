@@ -59,6 +59,10 @@ Follow this exact TypeScript interface:
     "from": string,
     "text": string
   },
+  
+  "aiImage"?: string,
+  "aiYoutube"?: string,
+  "aiLink"?: string,
 
   "summary": string,
   "footer": string
@@ -95,8 +99,13 @@ export const aiResponse = async (
         throw new Error("Empty AI response");
     }
 
-    return JSON.parse(rawText);
-};
+    // Remove backticks and markdown language tags
+    const cleanedText = rawText
+        .replace(/^\s*```(?:json)?\s*/, '') // remove opening ``` or ```json
+        .replace(/\s*```\s*$/, '');        // remove closing ```
 
+    return JSON.parse(cleanedText);
+};
+//
 // const result = await aiResponse({ question: "What is science?" });
 // console.log(result);

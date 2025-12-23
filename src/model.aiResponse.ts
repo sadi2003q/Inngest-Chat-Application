@@ -5,6 +5,14 @@ export interface AIResponse {
     introduction: string;
     tags: string[];
 
+    // media & external
+    aiImage?: string;
+    aiLink?: {
+        href: string;
+        label: string;
+    };
+    aiYoutube?: string;
+
     definition?: {
         term: string;
         meaning: string;
@@ -13,22 +21,29 @@ export interface AIResponse {
     description?: string;
 
     points?: {
-        heading: string,
+        heading: string;
         point: string[];
-    }
+    };
+
     steps?: {
-        heading: string,
+        heading: string;
         point: string[];
-    }
+    };
 
     warning?: {
-        heading: string,
+        heading: string;
         text: string;
-    }
+    };
+
     tips?: {
-        heading: string,
+        heading: string;
         text: string;
-    }
+    };
+
+    quotes?: {
+        from: string;
+        text: string;
+    };
 
     code?: string;
 
@@ -37,14 +52,10 @@ export interface AIResponse {
         rows: string[][];
     };
 
-    quotes?: {
-        from: string;
-        text: string;
-    }
-
     summary: string;
-    footer: string;
+    footer?: string;
 }
+
 
 
 export type Message =

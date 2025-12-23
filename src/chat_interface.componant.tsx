@@ -8,6 +8,8 @@ import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import React, { useRef, useEffect } from "react";
 import {TAG_COLORS} from "./utilities.ts";
 import type {AIResponse, Message} from "./model.aiResponse.ts";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export const ChatHeader = ({
                                name,
@@ -307,12 +309,28 @@ export const TypingIndicator = () => {
 
 
 
+
+
 const AIMessageRenderer = ({ data }: { data: AIResponse }) => {
     return (
         <div className="my-4 space-y-3">
+
+            {/*aiImage: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Observer_w3s.png",*/}
+            {/*aiYoutube: "https://www.youtube.com/watch?v=FEZ24CRBxMM",*/}
+            {/*aiLink: "https://refactoring.guru/design-patterns/observer",*/}
+
+            {/*{data.aiImage && (*/}
+            {/*    <AIImage*/}
+            {/*        src={data.aiImage}*/}
+            {/*        alt={`Diagram for ${data.heading}`}*/}
+            {/*    />*/}
+            {/*)}*/}
             <AIHeading text={data.heading} />
             <AIIntroduction text={data.introduction} />
             <AITags tags={data.tags} />
+
+            {data.quotes && <AIQuote data={data.quotes} />}
+
 
             {data.definition && (
                 <AIDefinition
@@ -327,12 +345,27 @@ const AIMessageRenderer = ({ data }: { data: AIResponse }) => {
 
             {data.code && <AICodeBlock code={data.code} />}
 
+            {data.aiYoutube && (
+                <AIYouTube
+                    embedId={data.aiYoutube.split('v=')[1]}
+                />
+            )}
+
             {data.warning && <AIWarning data={data.warning} />}
 
             {data.table && (
                 <AITable headers={data.table.headers} rows={data.table.rows} />
             )}
 
+            {data.tips && <AITips data={data.tips} />}
+
+
+            {data.aiLink && (
+                <AILink
+                    label={data.aiLink.label}
+                    href={data.aiLink.href}
+                />
+            )}
             <AISummary text={data.summary} />
             <AIFooter text={data.footer} />
         </div>
@@ -340,8 +373,26 @@ const AIMessageRenderer = ({ data }: { data: AIResponse }) => {
 };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const AIHeading = ({ text }: { text: string }) => (
-    <h1 className="text-2xl font-bold text-white my-4">
+    <h1 className="text-2xl underline decoration-amber-100 underline-offset-4 font-bold text-white my-4">
         {text}
     </h1>
 );
@@ -352,12 +403,40 @@ export const AIIntroduction = ({ text }: { text: string }) => (
     </p>
 );
 
-export const AICodeBlock = ({ code }: { code: string }) => (
-    <pre className="bg-gray-900 text-green-400 p-4 rounded-lg my-4 overflow-x-auto text-sm">
-        <code>{code}</code>
-    </pre>
-);
+const AICodeBlock = ({
+                                code,
+                                language = "java",
+                            }: {
+    code: string;
+    language?: string;
+}) => (
+    <div className="my-6 rounded-2xl border border-white/10 bg-black/60 overflow-hidden">
+        <h2 className={'underline decoration-purple-500 underline-offset-4 text-xl font-bold'}>Code...</h2>
 
+        <div className="flex items-center justify-between px-4 py-2 bg-white/5">
+      <span className="text-xs uppercase tracking-wide text-white/60">
+        {language}
+      </span>
+        </div>
+
+        <SyntaxHighlighter
+            language={language}
+            style={oneDark}
+            customStyle={{
+                margin: 0,
+                background: "transparent",
+                fontSize: "0.85rem",
+            }}
+            codeTagProps={{
+                style: {
+                    fontFamily: "JetBrains Mono, monospace",
+                },
+            }}
+        >
+            {code}
+        </SyntaxHighlighter>
+    </div>
+);
 
 
 
@@ -365,6 +444,7 @@ export const AIImage = ({ src, alt }: { src: string; alt?: string }) => (
     <img
         src={src}
         alt={alt}
+        referrerPolicy="no-referrer" // Adds a layer of bypass for some sites
         className="rounded-xl my-4 max-w-full"
     />
 );
@@ -372,6 +452,7 @@ export const AIImage = ({ src, alt }: { src: string; alt?: string }) => (
 
 export const AIYouTube = ({ embedId }: { embedId: string }) => (
     <div className="aspect-video my-4">
+        <h2 className={'underline decoration-yellow-400 underline-offset-4 text-xl font-bold'}>Watch for More Information</h2>
         <iframe
             className="w-full h-full rounded-xl"
             src={`https://www.youtube.com/embed/${embedId}`}
@@ -393,21 +474,53 @@ export const AILink = ({ label, href }: { label: string; href: string }) => (
 
 
 // Individual UI Components
-export const AIPoints = ({ data }: { data: { heading: string; point: string[] } }) => (
-    <div className="my-4">
-        <h3 className="text-lg font-semibold text-white mb-2">{data.heading}</h3>
-        <ul className="list-disc list-inside text-white/90 space-y-1">
-            {data.point.map((p, i) => <li key={i}>{p}</li>)}
-        </ul>
-    </div>
+export const AIPoints = ({
+     data,
+ }: {
+data: { heading: string; point: string[] };
+}) => (
+<div className="my-6 rounded-2xl bg-white/5 border border-white/10 p-5">
+<h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+<span className="w-2 h-2 rounded-full bg-emerald-400" />
+{data.heading}
+</h3>
+
+<ul className="space-y-3 text-white/90">
+{data.point.map((p, i) => (
+<li key={i} className="flex items-start gap-3">
+<span className="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+<p className="leading-relaxed">{p}</p>
+</li>
+))}
+</ul>
+</div>
 );
 
-export const AISteps = ({ data }: { data: { heading: string; point: string[] } }) => (
-    <div className="my-4">
-        <h3 className="text-lg font-semibold text-white mb-2">{data.heading}</h3>
-        <ol className="list-decimal list-inside text-white space-y-1">
-            {data.point.map((s, i) => <li key={i}>{s}</li>)}
-        </ol>
+
+export const AISteps = ({
+    data,
+}: {
+    data: { heading: string; point: string[] };
+}) => (
+    <div className="my-6 rounded-2xl bg-white/5 border border-white/10 p-5">
+        <h3 className="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-indigo-400" />
+            {data.heading}
+        </h3>
+
+        <div className="space-y-4">
+            {data.point.map((step, i) => (
+                <div key={i} className="flex gap-4 items-start">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 font-semibold shrink-0">
+                        {i + 1}
+                    </div>
+
+                    <p className="text-white/90 leading-relaxed">
+                        {step}
+                    </p>
+                </div>
+            ))}
+        </div>
     </div>
 );
 
@@ -436,18 +549,30 @@ export const AIQuote = ({ data }: { data: { from: string; text: string } }) => (
 
 
 
-export const AIDefinition = ({ term, meaning }: { term: string; meaning: string }) => (
-    <p className="text-white my-2">
-        <strong>{term}:</strong> {meaning}
-    </p>
+export const AIDefinition = ({
+                                 term,
+                                 meaning,
+                             }: {
+    term: string;
+    meaning: string;
+}) => (
+    <div className="my-5 rounded-xl bg-white/5 border border-white/10 p-4">
+        <div className="flex items-start gap-2 mb-1">
+            <span className="w-2 h-2 mt-2 rounded-full bg-cyan-400 shrink-0" />
+            <h4 className="text-white font-semibold">
+                {term}
+            </h4>
+        </div>
+
+        <p className="text-white/90 leading-relaxed ml-4">
+            {meaning}
+        </p>
+    </div>
 );
 
 
-
-
-
-export const AITags = ({ tags }: { tags: string[] }) => (
-    <div className="flex flex-wrap gap-2 my-3">
+const AITags = ({ tags }: { tags: string[] }) => (
+    <div className="flex flex-wrap gap-2 my-3 cursor-pointer">
         {tags.map((tag, index) => (
             <span
                 key={index}
@@ -467,46 +592,56 @@ export const AITags = ({ tags }: { tags: string[] }) => (
 
 
 
-export const AITable = ({
-                            headers,
-                            rows,
-                        }: {
-    headers: string[];
-    rows: string[][];
+const AITable = ({
+    headers,
+    rows,
+}: {
+headers: string[];
+rows: string[][];
 }) => (
-    <table className="w-full text-white my-4 border border-white/10">
-        <thead>
-        <tr>
-            {headers.map((h, i) => (
-                <th key={i} className="border px-3 py-2">
-                    {h}
-                </th>
-            ))}
-        </tr>
-        </thead>
-        <tbody>
-        {rows.map((row, i) => (
-            <tr key={i}>
-                {row.map((cell, j) => (
-                    <td key={j} className="border px-3 py-2">
-                        {cell}
-                    </td>
-                ))}
-            </tr>
-        ))}
-        </tbody>
-    </table>
+<table className="w-full text-white my-4 border border-white/10">
+<thead>
+<tr>
+{headers.map((h, i) => (
+<th key={i} className="border px-3 py-2">
+{h}
+</th>
+))}
+</tr>
+</thead>
+<tbody>
+{rows.map((row, i) => (
+<tr key={i}>
+{row.map((cell, j) => (
+<td key={j} className="border px-3 py-2">
+{cell}
+</td>
+))}
+</tr>
+))}
+</tbody>
+</table>
 );
 
 
 export const AISummary = ({ text }: { text: string }) => (
-    <div className="border-t border-white/10 pt-3 mt-6 text-white/80">
-        <strong>Summary:</strong> {text}
+    <div className="mt-8 rounded-xl bg-white/5 border border-white/10 p-4">
+        <div className="flex items-center gap-2 mb-2 text-white">
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
+            <strong className="text-sm uppercase tracking-wide text-white/80">
+                Summary
+            </strong>
+        </div>
+
+        <p className="text-white/90 leading-relaxed">
+            {text}
+        </p>
     </div>
 );
 
 export const AIFooter = ({ text }: { text: string }) => (
-    <div className="text-xs text-white/40 mt-4">
-        {text}
+    <div className="mt-6 text-xs text-white/40 flex items-center gap-2">
+        <span className="w-1 h-1 rounded-full bg-white/30" />
+        <span>{text}</span>
     </div>
 );

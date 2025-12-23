@@ -1,3 +1,4 @@
+import type {AIResponse} from "./model.aiResponse.ts";
 
 
 export const TAG_COLORS = [
@@ -8,3 +9,121 @@ export const TAG_COLORS = [
     "bg-pink-500/20 text-pink-400 border-pink-400/30",
     "bg-cyan-500/20 text-cyan-400 border-cyan-400/30",
 ];
+
+
+export const demoResponse: AIResponse = {
+    heading: "The Observer Design Pattern: A Comprehensive Guide",
+    introduction: "The Observer Pattern is a behavioral design pattern that defines a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically. It is a cornerstone of event-driven programming and is the engine behind MVC (Model-View-Controller) architectures where the view stays synchronized with the model.",
+    tags: ["Design Patterns", "Behavioral", "Event-Driven", "Reactive", "Software Architecture", "Java", "Pub-Sub"],
+
+    // Actual reliable image of the Observer pattern structure
+    aiImage: "https://refactoring.guru/images/patterns/diagrams/observer/structure.png",
+
+    // Just the ID for your AIYouTube component: FEZ24CRBxMM
+    aiYoutube: "https://www.youtube.com/watch?v=FEZ24CRBxMM",
+
+    aiLink: {
+        href: "https://refactoring.guru/design-patterns/observer",
+        label: "Read full documentation on Refactoring Guru",
+    },
+
+    definition: {
+        term: "Subject & Observer",
+        meaning: "The 'Subject' is the object containing the state and the logic to manage subscribers, while 'Observers' are the objects that register with the subject to receive updates when that state changes."
+    },
+
+    description: "In modern software development, the Observer pattern is everywhere. It allows for a highly decoupled system where the Subject doesn't need to know anything about the concrete classes of its observers. This makes it incredibly easy to add new subscribers (like logging services, analytics trackers, or UI updates) without modifying the core business logic of the subject itself. It is the primary alternative to 'polling,' where an object would constantly check for changes, wasting CPU cycles.",
+
+    points: {
+        heading: "Core Principles and Advantages",
+        point: [
+            "Decoupled Communication: The subject and observers can vary independently. You can reuse subjects without reusing their observers, and vice versa.",
+            "Support for Broadcast: Unlike a simple function call, the notification is broadcast automatically to all interested parties that have subscribed.",
+            "Dynamic Subscription: Observers can be added or removed at runtime, allowing for flexible application behavior based on user actions or system state.",
+            "Clean Code (Open/Closed Principle): You can introduce new observer classes without having to change the subject's code, adhering to SOLID principles."
+        ]
+    },
+
+    steps: {
+        heading: "Detailed Implementation Workflow",
+        point: [
+            "Declare the Observer Interface: Create an interface with an 'update()' method that the Subject will call.",
+            "Define the Subject Interface: Include methods for attaching, detaching, and notifying observers.",
+            "Implement the Concrete Subject: Maintain a list of subscribers and iterate through them whenever a state change occurs.",
+            "Implement Concrete Observers: Define how each specific observer should react when the 'update()' method is triggered.",
+            "Client Registration: The client code must instantiate the subject and observers, then link them using the attach/subscribe method."
+        ]
+    },
+
+    warning: {
+        heading: "The Memory Leak Risk",
+        text: "The most common pitfall is the 'Lapsed Listener' problem. If you forget to detach observers when they are no longer needed, the Subject will hold a strong reference to them, preventing the Garbage Collector from freeing up memory. Always implement a cleanup or unsubscribe mechanism."
+    },
+
+    tips: {
+        heading: "Performance Optimization",
+        text: "If a subject has many observers and the updates are frequent, consider 'Push' vs 'Pull' models. In 'Push,' the subject sends detailed data. In 'Pull,' the subject only sends a notification, and the observer requests only the specific data it needs."
+    },
+
+    code: `import java.util.ArrayList;
+import java.util.List;
+
+// The Observer Interface
+interface Observer {
+    void update(String news);
+}
+
+// The Subject (Observable)
+class NewsAgency {
+    private String news;
+    private List<Observer> observers = new ArrayList<>();
+
+    public void addObserver(Observer observer) {
+        this.observers.add(observer);
+    }
+
+    public void removeObserver(Observer observer) {
+        this.observers.remove(observer);
+    }
+
+    public void setNews(String news) {
+        this.news = news;
+        for (Observer observer : this.observers) {
+            observer.update(this.news);
+        }
+    }
+}
+
+// Concrete Observer
+class NewsChannel implements Observer {
+    private String name;
+    public NewsChannel(String name) { this.name = name; }
+
+    @Override
+    public void update(String news) {
+        System.out.println(name + " received news: " + news);
+    }
+}`,
+
+
+
+    table: {
+        headers: ["Pattern Component", "Responsibility", "Relationship"],
+        rows: [
+            ["Subject", "Maintains state and list of observers", "1 to Many"],
+            ["Concrete Subject", "Sends notification when state changes", "Owns the data"],
+            ["Observer", "Defines the update interface", "Interface"],
+            ["Concrete Observer", "Implements specific reaction logic", "Subscribed to Subject"],
+            ["Event Hook", "The trigger that starts the notification", "Internal Trigger"]
+        ]
+    },
+
+    quotes: {
+        from: "Eric Freeman, Head First Design Patterns",
+        text: "The Observer Pattern provides an object design where subjects and observers are loosely coupled—they interact, but have very little knowledge of each other."
+    },
+
+    summary: "The Observer pattern is essential for creating responsive, decoupled systems. By moving from a 'polling' mindset to an 'interrupt' or 'event' mindset, you significantly improve the efficiency and scalability of your application's communication layer.",
+    footer: "Reference: Behavioral Design Patterns Library | v2.4.0 | © 2025"
+};
+
