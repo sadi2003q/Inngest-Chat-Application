@@ -468,25 +468,29 @@ export const AILink = ({ label, href }: { label: string; href: string }) => (
 );
 
 
-// Individual UI Components
 export const AIPoints = ({
-     data,
- }: {
+                             data,
+                         }: {
     data: { heading: string; point: string[] };
-    }) => (
+}) => (
     <div className="my-6 rounded-2xl bg-white/5 border border-white/10 p-5">
         <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                {data.heading}
+            {data.heading}
         </h3>
 
         <ul className="space-y-3 text-white/90">
-            {data.point.map((p, i) => (
-                <li key={i} className="flex items-start gap-3">
-                    <span className="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                    <p className="leading-relaxed">{p}</p>
-                </li>
-            ))}
+            {data.point.map((p, i) => {
+                const content = renderPointText(p);
+                if (!content) return null;
+
+                return (
+                    <li key={i} className="flex items-start gap-3">
+                        <span className="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                        {content}
+                    </li>
+                );
+            })}
         </ul>
     </div>
 );
@@ -619,7 +623,7 @@ rows: string[][];
 );
 
 
-export const AISummary = ({ text }: { text: string }) => (
+const AISummary = ({ text }: { text: string }) => (
     <div className="mt-8 rounded-xl bg-white/5 border border-white/10 p-4">
         <div className="flex items-center gap-2 mb-2 text-white">
             <span className="w-2 h-2 rounded-full bg-amber-400" />
@@ -634,9 +638,39 @@ export const AISummary = ({ text }: { text: string }) => (
     </div>
 );
 
-export const AIFooter = ({ text }: { text: string }) => (
+const AIFooter = ({ text }: { text: string }) => (
     <div className="mt-6 text-xs text-white/40 flex items-center gap-2">
         <span className="w-1 h-1 rounded-full bg-white/30" />
         <span>{text}</span>
     </div>
 );
+
+
+
+const renderPointText = (text: string) => {
+    // Ignore empty lines
+    if (!text.trim()) return null;
+
+    // Match **Something**
+    const match = text.match(/^\*\*(.+?)\*\*(.*)$/);
+
+    if (!match) {
+        // Normal point
+        return <p className="leading-relaxed">{text}</p>;
+    }
+
+    const [, boldText, restText] = match;
+
+    return (
+        <p className="leading-relaxed">
+            <span className="font-semibold text-base text-white">
+                {boldText}
+            </span>
+            {restText && (
+                <span className="text-white/90">
+                    {restText}
+                </span>
+            )}
+        </p>
+    );
+};
