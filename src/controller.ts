@@ -1,6 +1,6 @@
 // File: src/chat_controller.ts
 
-import { aiResponse } from "./GeminiResponse.ts";
+import { aiResponse, aiResponseStream } from "./GeminiResponse.ts";
 import type { AIResponse, Message } from "./model.aiResponse.ts";
 import React from "react";
 import {demoResponse} from "./utilities.ts";
@@ -72,7 +72,65 @@ export class ChatController {
     };
 
 
+    getAnswerStream = async ({ question }: { question: string }) => {
 
+        if(!question.trim()) return { success: false, error: {message: "Empty question"} };
+        const userQuestion : Message= {
+            type: "user",
+            text: question,
+        }
+
+        this.setMessages((prev) => [...prev, userQuestion]);
+
+        const streamText : Message= {
+            type: "ai-stream",
+            text: ""
+        }
+
+        this.setMessages(prev => [...prev, streamText]);
+
+        try {
+
+            let streamText = "";
+
+            this.setIsLoading(true);
+            //Stream Text
+            const finalResponse = await aiResponseStream({question: question},
+                (chunk) => {
+                    streamText+=chunk;
+                    this.setMessages(prev =>
+                        prev.map(msg =>
+                            msg.type=='ai-stream' ? {...msg, text: streamText} : msg
+                        )
+                    )
+                }
+             )
+
+            // Removed Stream raw Text with Structured Output
+            this.setMessages(prev =>
+                prev.filter(m => m.type !== 'ai-stream').concat({
+                    type: "ai-structured",
+                    data: finalResponse,
+                })
+            )
+
+            console.log(finalResponse);
+
+        } catch (error) {
+            this.setMessages(prev => [...prev, {
+                type: 'ai-text',
+                text: error.message,
+            }])
+        } finally {
+            this.setIsLoading(false)
+        }
+
+
+
+
+
+
+    }
 
 
 

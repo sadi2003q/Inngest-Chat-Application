@@ -61,4 +61,5 @@ export interface AIResponse {
 export type Message =
     | { type: "user"; text: string }
     | { type: "ai-text"; text: string }
-    | { type: "ai-structured"; data: AIResponse };
+    | { type: "ai-structured"; data: AIResponse }
+    | { type: "ai-stream"; text: string };

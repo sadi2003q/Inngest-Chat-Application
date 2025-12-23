@@ -269,15 +269,19 @@ export const ChatWindow = ({
                     return <MessageBubble key={index} text={msg.text} />;
                 }
 
+                if (msg.type === "ai-stream") {
+                    return <ReceivedMessage key={index} text={msg.text} />;
+                }
+
                 if (msg.type === "ai-text") {
                     return <ReceivedMessage key={index} text={msg.text} />;
                 }
 
                 if (msg.type === "ai-structured") {
-                    return (
-                        <AIMessageRenderer key={index} data={msg.data} />
-                    );
+                    return <AIMessageRenderer key={index} data={msg.data} />;
                 }
+
+
 
                 return null;
             })}

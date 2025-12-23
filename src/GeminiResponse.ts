@@ -99,13 +99,47 @@ export const aiResponse = async (
         throw new Error("Empty AI response");
     }
 
-    // Remove backticks and markdown language tags
-    const cleanedText = rawText
+    return cleanJunkFromText({text: rawText})
+};
+
+
+const cleanJunkFromText = ({text} : {text: string}) => {
+    const cleanedText = text
         .replace(/^\s*```(?:json)?\s*/, '') // remove opening ``` or ```json
         .replace(/\s*```\s*$/, '');        // remove closing ```
 
     return JSON.parse(cleanedText);
-};
+}
+
+
+export const aiResponseStream = async ({ question }: { question: string },
+    onChunk: (partialText: string) => void
+) => {
+
+    const stream = await ai.models.generateContentStream({
+        model: "gemini-2.5-flash",
+        contents: [{
+            role: "user",
+            parts: [{text: `${SYSTEM_PROMPT}\n\nQuestion:\n${question}`}]
+        }]
+    })
+
+    let fullText = "";
+    for await (const chunk of stream) {
+        const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text) continue;
+
+        fullText += text
+        onChunk(text)
+    }
+
+    return cleanJunkFromText({text: fullText})
+
+
+}
+
+
+// For Testing Purpose
 //
 // const result = await aiResponse({ question: "What is science?" });
 // console.log(result);

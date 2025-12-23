@@ -19,7 +19,7 @@ import {ChatController} from "./controller.ts";
 // ---------------- COMPONENT ----------------
 export default function ChatInterface() {
 
-    const [textFieldMessage, setTextFieldMessage] = useState("");
+    const [textFieldMessage, setTextFieldMessage] = useState("Make me a Lecture about Starvation in Operation and also tell me the difference between Deadlock and Starvation.");
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -33,7 +33,7 @@ export default function ChatInterface() {
         setTextFieldMessage("");
 
         // simulated AI structured response
-        controller.getAnswer({question: textFieldMessage}).then(() => {
+        controller.getAnswerStream({question: textFieldMessage}).then(() => {
             console.log('success')
         }).catch(() => {
             console.log('error')
