@@ -315,16 +315,7 @@ const AIMessageRenderer = ({ data }: { data: AIResponse }) => {
     return (
         <div className="my-4 space-y-3">
 
-            {/*aiImage: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Observer_w3s.png",*/}
-            {/*aiYoutube: "https://www.youtube.com/watch?v=FEZ24CRBxMM",*/}
-            {/*aiLink: "https://refactoring.guru/design-patterns/observer",*/}
 
-            {/*{data.aiImage && (*/}
-            {/*    <AIImage*/}
-            {/*        src={data.aiImage}*/}
-            {/*        alt={`Diagram for ${data.heading}`}*/}
-            {/*    />*/}
-            {/*)}*/}
             <AIHeading text={data.heading} />
             <AIIntroduction text={data.introduction} />
             <AITags tags={data.tags} />
@@ -391,13 +382,13 @@ const AIMessageRenderer = ({ data }: { data: AIResponse }) => {
 
 
 
-export const AIHeading = ({ text }: { text: string }) => (
+ const AIHeading = ({ text }: { text: string }) => (
     <h1 className="text-2xl underline decoration-amber-100 underline-offset-4 font-bold text-white my-4">
         {text}
     </h1>
 );
 
-export const AIIntroduction = ({ text }: { text: string }) => (
+ const AIIntroduction = ({ text }: { text: string }) => (
     <p className="text-white/90 leading-relaxed my-2">
         {text}
     </p>
@@ -440,7 +431,7 @@ const AICodeBlock = ({
 
 
 
-export const AIImage = ({ src, alt }: { src: string; alt?: string }) => (
+ const AIImage = ({ src, alt }: { src: string; alt?: string }) => (
     <img
         src={src}
         alt={alt}
@@ -450,7 +441,7 @@ export const AIImage = ({ src, alt }: { src: string; alt?: string }) => (
 );
 
 
-export const AIYouTube = ({ embedId }: { embedId: string }) => (
+ const AIYouTube = ({ embedId }: { embedId: string }) => (
     <div className="aspect-video my-4">
         <h2 className={'underline decoration-yellow-400 underline-offset-4 text-xl font-bold'}>Watch for More Information</h2>
         <iframe
@@ -477,27 +468,27 @@ export const AILink = ({ label, href }: { label: string; href: string }) => (
 export const AIPoints = ({
      data,
  }: {
-data: { heading: string; point: string[] };
-}) => (
-<div className="my-6 rounded-2xl bg-white/5 border border-white/10 p-5">
-<h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-<span className="w-2 h-2 rounded-full bg-emerald-400" />
-{data.heading}
-</h3>
+    data: { heading: string; point: string[] };
+    }) => (
+    <div className="my-6 rounded-2xl bg-white/5 border border-white/10 p-5">
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                {data.heading}
+        </h3>
 
-<ul className="space-y-3 text-white/90">
-{data.point.map((p, i) => (
-<li key={i} className="flex items-start gap-3">
-<span className="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-<p className="leading-relaxed">{p}</p>
-</li>
-))}
-</ul>
-</div>
+        <ul className="space-y-3 text-white/90">
+            {data.point.map((p, i) => (
+                <li key={i} className="flex items-start gap-3">
+                    <span className="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                    <p className="leading-relaxed">{p}</p>
+                </li>
+            ))}
+        </ul>
+    </div>
 );
 
 
-export const AISteps = ({
+ const AISteps = ({
     data,
 }: {
     data: { heading: string; point: string[] };
@@ -524,14 +515,14 @@ export const AISteps = ({
     </div>
 );
 
-export const AITips = ({ data }: { data: { heading: string; text: string } }) => (
+ const AITips = ({ data }: { data: { heading: string; text: string } }) => (
     <div className="bg-green-500/10 p-4 rounded-lg my-4 border border-green-500/20">
         <h4 className="text-green-400 font-bold mb-1">{data.heading}</h4>
         <p className="text-green-300/90 italic">{data.text}</p>
     </div>
 );
 
-export const AIWarning = ({ data }: { data: { heading: string; text: string } }) => (
+ const AIWarning = ({ data }: { data: { heading: string; text: string } }) => (
     <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-lg my-4">
         <div className="font-bold flex items-center gap-2 mb-1">
             ⚠️ {data.heading}
@@ -540,7 +531,7 @@ export const AIWarning = ({ data }: { data: { heading: string; text: string } })
     </div>
 );
 
-export const AIQuote = ({ data }: { data: { from: string; text: string } }) => (
+ const AIQuote = ({ data }: { data: { from: string; text: string } }) => (
     <blockquote className="border-l-4 border-green-500 pl-4 my-6">
         <p className="italic text-white/80 text-lg">"{data.text}"</p>
         <cite className="text-white/50 block mt-2 text-sm">— {data.from}</cite>
@@ -549,7 +540,7 @@ export const AIQuote = ({ data }: { data: { from: string; text: string } }) => (
 
 
 
-export const AIDefinition = ({
+ const AIDefinition = ({
                                  term,
                                  meaning,
                              }: {
