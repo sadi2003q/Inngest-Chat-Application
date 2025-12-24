@@ -22,8 +22,15 @@ export default function ChatInterface() {
     const [textFieldMessage, setTextFieldMessage] = useState("Make me a Lecture about Starvation in Operation and also tell me the difference between Deadlock and Starvation.");
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [conversationSummary, setConversationSummary] = useState<string>("");
 
-    const controller = new ChatController({setMessages: setMessages, setIsLoading: setIsLoading});
+    const controller = new ChatController({
+        setMessages: setMessages,
+        setIsLoading: setIsLoading,
+        messages: () => messages,
+        conversationSummary: () => conversationSummary,
+        setConversationSummary: setConversationSummary,
+    });
 
 
     const showMessage = () => {

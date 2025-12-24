@@ -362,7 +362,7 @@ const AIMessageRenderer = ({ data }: { data: AIResponse }) => {
                 />
             )}
             <AISummary text={data.summary} />
-            <AIFooter text={data.footer} />
+            {data.footer && <AIFooter text={data.footer} />}
         </div>
     );
 };
@@ -435,14 +435,14 @@ const AICodeBlock = ({
 
 
 
- const AIImage = ({ src, alt }: { src: string; alt?: string }) => (
-    <img
-        src={src}
-        alt={alt}
-        referrerPolicy="no-referrer" // Adds a layer of bypass for some sites
-        className="rounded-xl my-4 max-w-full"
-    />
-);
+//  const AIImage = ({ src, alt }: { src: string; alt?: string }) => (
+//     <img
+//         src={src}
+//         alt={alt}
+//         referrerPolicy="no-referrer" // Adds a layer of bypass for some sites
+//         className="rounded-xl my-4 max-w-full"
+//     />
+// );
 
 
  const AIYouTube = ({ embedId }: { embedId: string }) => (

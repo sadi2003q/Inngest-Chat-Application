@@ -1,24 +1,37 @@
 // File: src/chat_controller.ts
 
-import { aiResponse, aiResponseStream } from "./GeminiResponse.ts";
-import type { AIResponse, Message } from "./model.aiResponse.ts";
+import { aiResponseStream, generateSummary } from "./GeminiResponse.ts";
+import type { Message } from "./model.aiResponse.ts";
 import React from "react";
-import {demoResponse} from "./utilities.ts";
+import {demoResponse, SYSTEM_PROMPT} from "./utilities.ts";
 
 
 export class ChatController {
     private readonly setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
     private readonly setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    private readonly messages: () => Message[]
+    private readonly conversationSummary: () => string;
+    private readonly setConversationSummary: React.Dispatch<React.SetStateAction<string>>
+
 
     constructor({
         setMessages,
         setIsLoading,
+        messages,
+        conversationSummary,
+        setConversationSummary,
     }: {
         setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
-        setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+        setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+        messages: () => Message[],
+        conversationSummary: () => string,
+        setConversationSummary: React.Dispatch<React.SetStateAction<string>>,
     }) {
         this.setMessages = setMessages;
         this.setIsLoading = setIsLoading;
+        this.setConversationSummary = setConversationSummary;
+        this.messages = messages;
+        this.conversationSummary = conversationSummary;
     }
 
     // Method to send a question and get AI response
@@ -55,14 +68,20 @@ export class ChatController {
                 success: true,
             };
         } catch (error) {
-            // console.error("Error fetching AI response:", error);
             this.setIsLoading(false);
-            // Optionally show an AI error message
+
+            let errorText = "Something went wrong";
+
+            if (error instanceof Error) {
+                errorText = error.message;
+            }
+
             const errorMessage: Message = {
                 type: "ai-text",
-                text: error.messaage,
+                text: errorText,
             };
-            this.setMessages((prev) => [...prev, errorMessage]);
+
+            this.setMessages(prev => [...prev, errorMessage]);
 
             return {
                 success: false,
@@ -94,8 +113,11 @@ export class ChatController {
             let streamText = "";
 
             this.setIsLoading(true);
+
+            const prompt = this.buildContextPrompt(question);
+
             //Stream Text
-            const finalResponse = await aiResponseStream({question: question},
+            const finalResponse = await aiResponseStream({question: prompt},
                 (chunk) => {
                     streamText+=chunk;
                     this.setMessages(prev =>
@@ -114,12 +136,29 @@ export class ChatController {
                 })
             )
 
-            console.log(finalResponse);
+
+            const summary = await generateSummary({
+                conversationSummary: this.conversationSummary,
+                question: question,
+                finalText: finalResponse
+
+            })
+
+            this.setConversationSummary(summary);
+
+
 
         } catch (error) {
+
+            let errorText = "Something went wrong";
+
+            if (error instanceof Error) {
+                errorText = error.message;
+            }
+
             this.setMessages(prev => [...prev, {
                 type: 'ai-text',
-                text: error.message,
+                text: errorText
             }])
         } finally {
             this.setIsLoading(false)
@@ -133,10 +172,28 @@ export class ChatController {
     }
 
 
-
-
-
     wait = (ms: number) =>
         new Promise((resolve) => setTimeout(resolve, ms));
+
+    buildContextPrompt = (question: string) => {
+        const recentMessages = this.messages()
+            .filter(m => m.type === "user" || m.type === "ai-text")
+            .slice(-6)
+            .map(m => `${m.type === "user" ? "User" : "AI"}: ${m.text}`)
+            .join("\n");
+
+        return `
+${SYSTEM_PROMPT}
+
+Conversation Summary:
+${this.conversationSummary() || "No prior conversation."}
+
+Recent Messages:
+${recentMessages}
+
+Current Question:
+${question}
+`;
+    }
 }
 

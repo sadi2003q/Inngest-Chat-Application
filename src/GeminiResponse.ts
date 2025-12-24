@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
-import type { AIResponse } from "./model.aiResponse.ts";
+import type {AIResponse} from "./model.aiResponse.ts";
 import {GEMINI_secret} from "./secret.ts";
+import {SYSTEM_PROMPT, SUMMARY_PROMPT} from "./utilities.ts";
 
 const ai = new GoogleGenAI({
     apiKey: GEMINI_secret
@@ -8,73 +9,7 @@ const ai = new GoogleGenAI({
 
 
 
-const SYSTEM_PROMPT = `
-You are an AI content generator.
 
-Return your response ONLY as valid JSON.
-Do NOT include markdown, comments, or extra text.
-
-Follow this exact TypeScript interface:
-
-{
-  "heading": string,
-  "introduction": string,
-  "tags": string[],
-
-  "definition"?: {
-    "term": string,
-    "meaning": string
-  },
-
-  "description"?: string,
-
-  "points"?: {
-    "heading": string,
-    "point": string[]
-  },
-
-  "steps"?: {
-    "heading": string,
-    "point": string[]
-  },
-
-  "warning"?: {
-    "heading": string,
-    "text": string
-  },
-
-  "tips"?: {
-    "heading": string,
-    "text": string
-  },
-
-  "code"?: string,
-
-  "table"?: {
-    "headers": string[],
-    "rows": string[][]
-  },
-
-  "quotes"?: {
-    "from": string,
-    "text": string
-  },
-  
-  "aiImage"?: string,
-  "aiYoutube"?: string,
-  "aiLink"?: string,
-
-  "summary": string,
-  "footer": string
-}
-
-Rules:
-- Include ONLY fields relevant to the question
-- Omit irrelevant optional fields completely
-- All strings must be plain text
-- Arrays must never be null
-- code field must be raw code as a string (no markdown)
-`;
 
 export const aiResponse = async (
     { question }: { question: string }
@@ -112,7 +47,8 @@ const cleanJunkFromText = ({text} : {text: string}) => {
 }
 
 
-export const aiResponseStream = async ({ question }: { question: string },
+export const aiResponseStream = async (
+    { question }: { question: string },
     onChunk: (partialText: string) => void
 ) => {
 
@@ -137,6 +73,37 @@ export const aiResponseStream = async ({ question }: { question: string },
 
 
 }
+
+
+
+
+export const generateSummary = async ({
+    conversationSummary,
+    question,
+    finalText
+} : {
+    conversationSummary: () => string;
+    question: string;
+    finalText: string;
+}) => {
+    const aiResponse = await ai.models.generateContent({
+        model: "gemini-2.5-flash-lite",
+        contents: [{
+            role: "user",
+            parts: [{
+                text: SUMMARY_PROMPT
+                    .replace("{{summary}}", conversationSummary())
+                    .replace("{{question}}", question)
+                    .replace("{{answer}}", finalText),
+            }]
+        }]
+    })
+    console.log("Summary Created...")
+
+    return aiResponse.candidates?.[0]?.content?.parts?.[0]?.text ?? ""
+}
+
+
 
 
 // For Testing Purpose
