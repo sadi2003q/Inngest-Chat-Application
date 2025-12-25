@@ -62,7 +62,9 @@ export class ChatController {
             this.setMessages((prev) => [...prev, aiMessage]);
 
             // 4️⃣ Generate Summary through Inngest
-            await fetch("http://localhost:3001/api/send-summary", {
+            this.setIsLoading(true);
+
+            const response = await fetch("http://localhost:3001/api/send-summary", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -73,6 +75,15 @@ export class ChatController {
                     },
                 }),
             });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message || "Inngest failed after all retries");
+            }
+
+
+
 
 
             // console.log(inngestResponse);

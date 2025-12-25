@@ -23,12 +23,28 @@ app.use(
 );
 
 app.post("/api/send-summary", async (req, res) => {
-    await inngest.send({
-        name: "call/gemini",
-        data: req.body,
-    });
+    try {
+        const result = await inngest.send({
+            name: "call/gemini",
+            data: req.body,
+            waitForResponse: true, // ✅ wait for function completion
+        });
 
-    res.json({ success: true });
+        if (!result.success) {
+            return res.status(500).json({
+                success: false,
+                message: result.error || "Failed to generate summary",
+            });
+        }
+
+        res.json({ success: true, message: "Summary generated" });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err instanceof Error ? err.message : "Something went wrong",
+        });
+    }
 });
 
 app.listen(3001, () => {

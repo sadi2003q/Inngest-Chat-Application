@@ -8,6 +8,10 @@ export const callGemini = inngest.createFunction(
     {
         name: "call Gemini",
         id: "call-gemini",
+        retries: 2,
+        timeouts: {
+            finish: "10s"
+        }
     },
     { event: "call/gemini" },
 
@@ -24,7 +28,7 @@ export const callGemini = inngest.createFunction(
             // });
 
 
-            return "Summary from Gemini is Created..."
+            throw new Error("No summary found.");
 
         })
 
