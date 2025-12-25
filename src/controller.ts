@@ -4,7 +4,6 @@ import {aiResponseStream, generateSummary} from "./GeminiResponse.ts";
 import type {Message} from "./model.aiResponse.ts";
 import React from "react";
 import {demoResponse, SYSTEM_PROMPT} from "./utilities.ts";
-import { inngest } from './INNGEST/client.ts'
 
 
 export class ChatController {
@@ -63,19 +62,20 @@ export class ChatController {
             this.setMessages((prev) => [...prev, aiMessage]);
 
             // 4️⃣ Generate Summary through Inngest
-            const inngestResponse = await inngest.send({
-                name: "call/gemini",
-                data: {
+            await fetch("http://localhost:3001/api/send-summary", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
                     question: {
-                        currentSummary: this.conversationSummary,
+                        currentSummary: this.conversationSummary(),
                         question: "What is the main idea?",
-                        finalAnswer: "This is the final answer"
-                    }
-                }
-            })
+                        finalAnswer: "This is the final answer",
+                    },
+                }),
+            });
 
 
-            console.log(inngestResponse);
+            // console.log(inngestResponse);
 
 
 

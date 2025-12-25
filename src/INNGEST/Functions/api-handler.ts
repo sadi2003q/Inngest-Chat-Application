@@ -1,3 +1,5 @@
+// filepath: src/INGEST/Functions/api-handler.ts
+
 import {inngest} from "../client.ts";
 import {generateSummary} from '../../GeminiResponse.ts'
 import { wait } from "../../utilities.ts";
@@ -36,7 +38,7 @@ export const callGemini = inngest.createFunction(
             console.log("Saved to Memory : ", response);
         })
 
-
+        console.log("✅ Inngest Function initialised");
         return {
             success: true,
             message: "Summary is generated and Saved to Database"
@@ -46,3 +48,5 @@ export const callGemini = inngest.createFunction(
 
     }
 )
+
+
