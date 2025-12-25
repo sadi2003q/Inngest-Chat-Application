@@ -70,8 +70,6 @@ export const aiResponseStream = async (
     }
 
     return cleanJunkFromText({text: fullText})
-
-
 }
 
 

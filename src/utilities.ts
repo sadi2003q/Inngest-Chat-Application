@@ -216,3 +216,7 @@ Rules:
 - Prefer table when it comes to Comparison or Difference between/among Something rather then showing points.
 - code field must be raw code as a string (no markdown)
 `;
+
+export const wait = ({ time }: { time: number }) => {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}

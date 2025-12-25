@@ -33,18 +33,20 @@ export default function ChatInterface() {
     });
 
 
-    const showMessage = () => {
+    const showMessage = async () => {
         if (!textFieldMessage.trim()) return;
 
 
         setTextFieldMessage("");
 
-        // simulated AI structured response
-        controller.getAnswerStream({question: textFieldMessage}).then(() => {
-            console.log('success')
-        }).catch(() => {
-            console.log('error')
-        });
+        // Stream AI structured response
+        // await controller.getAnswerStream({question: textFieldMessage})
+
+        // Simulate AI response
+        await controller.getAnswer({question: textFieldMessage});
+
+
+
     }
 
 

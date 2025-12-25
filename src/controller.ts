@@ -1,9 +1,10 @@
 // File: src/chat_controller.ts
 
-import { aiResponseStream, generateSummary } from "./GeminiResponse.ts";
-import type { Message } from "./model.aiResponse.ts";
+import {aiResponseStream, generateSummary} from "./GeminiResponse.ts";
+import type {Message} from "./model.aiResponse.ts";
 import React from "react";
 import {demoResponse, SYSTEM_PROMPT} from "./utilities.ts";
+import { inngest } from './INNGEST/client.ts'
 
 
 export class ChatController {
@@ -52,21 +53,34 @@ export class ChatController {
             // 2️⃣ Call AI (replace aiResponse with your actual API call)
             // const response: AIResponse = await aiResponse({ question });
             await this.wait(2000) // Simulate Ai response waiting time.
-            const response = demoResponse; // Demo response for testing
 
 
             // 3️⃣ Add AI structured message
             const aiMessage: Message = {
                 type: "ai-structured",
-                data: response,
+                data: demoResponse,
             };
-
-            this.setIsLoading(false); // Loading ends
             this.setMessages((prev) => [...prev, aiMessage]);
 
-            return {
-                success: true,
-            };
+            // 4️⃣ Generate Summary through Inngest
+            const inngestResponse = await inngest.send({
+                name: "call/gemini",
+                data: {
+                    question: {
+                        currentSummary: this.conversationSummary,
+                        question: "What is the main idea?",
+                        finalAnswer: "This is the final answer"
+                    }
+                }
+            })
+
+
+            console.log(inngestResponse);
+
+
+
+            return { success: true };
+
         } catch (error) {
             this.setIsLoading(false);
 
@@ -83,11 +97,12 @@ export class ChatController {
 
             this.setMessages(prev => [...prev, errorMessage]);
 
-            return {
-                success: false,
-                error,
-            };
+
+        } finally {
+            this.setIsLoading(false); // Loading ends
         }
+
+        return { success: false };
     };
 
 
@@ -136,7 +151,7 @@ export class ChatController {
                 })
             )
 
-
+            // generate Summary
             const summary = await generateSummary({
                 conversationSummary: this.conversationSummary,
                 question: question,
