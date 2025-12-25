@@ -1,7 +1,7 @@
 
 # Inngest Chat Application with Google Gemini
 
-[![License: MIT](https.img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-61DAFB.svg?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
@@ -21,6 +21,7 @@ This project is a powerful demonstration of how to build a modern web-based chat
 ## Features
 
 - **Real-time AI Chat:** Engage in dynamic conversations with the Google Gemini Pro model.
+- **Chat-Context:** Keep track of previous messages to answer the next. Memory implementation.
 - **Reliable Job Orchestration:** Uses Inngest to manage and ensure the reliable execution of AI response generation.
 - **Modern Frontend:** Built with React, Vite, and TypeScript for a fast and type-safe development experience.
 - **Responsive Design:** Styled with Tailwind CSS and Material UI for a great look on all devices.
