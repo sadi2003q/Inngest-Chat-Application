@@ -1,9 +1,9 @@
 // File: src/chat_controller.ts
 
-import {aiResponse, aiResponseStream, ConversationName, generateSummary} from "./GeminiResponse.ts";
-import type {AIResponse, Message} from "./model.aiResponse.ts";
+import {aiResponse, aiResponseStream, ConversationName, generateSummary} from "../Gemini/GeminiResponse.ts";
+import type {AIResponse, Message} from "../Model/model.aiResponse.ts";
 import React from "react";
-import {SYSTEM_PROMPT} from "./utilities.ts";
+import {demoResponse, SYSTEM_PROMPT} from "../Others/utilities.ts";
 
 
 export class ChatController {
@@ -13,6 +13,7 @@ export class ChatController {
     private readonly conversationSummary: string;
     private readonly setConversationSummary: React.Dispatch<React.SetStateAction<string>>
     private readonly setConversationHeading: React.Dispatch<React.SetStateAction<string>>;
+    private readonly setErrorMessage: React.Dispatch<React.SetStateAction<null | string>>;
 
     constructor({
         setMessages,
@@ -20,7 +21,8 @@ export class ChatController {
         messages,
         conversationSummary,
         setConversationSummary,
-        setConversationHeading
+        setConversationHeading,
+        setErrorMessage
     }: {
         setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
         setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
@@ -28,6 +30,7 @@ export class ChatController {
         conversationSummary: string,
         setConversationSummary: React.Dispatch<React.SetStateAction<string>>,
         setConversationHeading: React.Dispatch<React.SetStateAction<string>>,
+        setErrorMessage: React.Dispatch<React.SetStateAction<null | string>>;
     }) {
         this.setMessages = setMessages;
         this.setIsLoading = setIsLoading;
@@ -35,6 +38,7 @@ export class ChatController {
         this.messages = messages;
         this.conversationSummary = conversationSummary;
         this.setConversationHeading = setConversationHeading;
+        this.setErrorMessage = setErrorMessage;
     }
 
     // Method to send a question and get AI response
@@ -57,58 +61,19 @@ export class ChatController {
             // 2️⃣ Call AI (replace aiResponse with your actual API call)
             const prompt = this.buildContextPrompt(question);
             const response: AIResponse = await aiResponse({ question: prompt });
+            console.log(response);
             // await this.wait(2000) // Simulate Ai response waiting time.
 
 
             // 3️⃣ Add AI structured message
             const aiMessage: Message = {
                 type: "ai-structured",
-                data: response,
+                data: demoResponse,
             };
             this.setMessages((prev) => [...prev, aiMessage]);
 
-            // 4️⃣ Generate Summary through Inngest
-            const inngestResponse = await fetch("http://localhost:3001/api/send-summary", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    question: {
-                        currentSummary: this.conversationSummary,
-                        question: question,
-                        finalAnswer: response,
-                    },
-                }),
-            });
-
-            const summary = await inngestResponse.json();
-
-            console.log('Summary : \n' ,summary.data);
-
-
-            if(!summary.success) {
-                console.log("Something is not working" +
-                    " Please handle the error");
-                return;
-            }
-
-            this.setConversationSummary(summary.data);
-
         } catch (error) {
-
-            let errorText = "Something went wrong";
-
-            if (error instanceof Error) {
-                errorText = error.message;
-            }
-
-            const errorMessage: Message = {
-                type: "ai-text",
-                text: errorText,
-            };
-
-            this.setMessages(prev => [...prev, errorMessage]);
-
-
+            if (error instanceof Error)  this.handleError(error);
         } finally {
             this.setIsLoading(false); // Loading ends
         }
@@ -178,18 +143,11 @@ export class ChatController {
 
         } catch (error) {
 
-            let errorText = "Something went wrong";
+            if (error instanceof Error)  this.handleError(error);
 
-            if (error instanceof Error) {
-                errorText = error.message;
-            }
-
-            this.setMessages(prev => [...prev, {
-                type: 'ai-text',
-                text: errorText
-            }])
         } finally {
             this.setIsLoading(false)
+
         }
 
 
@@ -231,12 +189,29 @@ ${question}
             this.setConversationHeading(name);
 
         } catch(error) {
+            let errorText = "Something went wrong";
             if(error instanceof Error) {
-                console.log(error);
+                errorText = error.message;
             }
+            this.setErrorMessage(errorText)
         }
     }
 
+
+
+    handleError = (error: Error) => {
+        let errorText = "Something went wrong";
+
+        errorText = error.message;
+
+        this.setErrorMessage(errorText)
+        this.setMessages(prev => {
+            if (prev.length === 0) return prev; // nothing to remove
+            const newMessages = [...prev];
+            newMessages.pop(); // remove last message
+            return [...newMessages]; // optionally add the error message
+        });
+    }
 
 
 }

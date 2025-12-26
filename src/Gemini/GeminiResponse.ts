@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
-import type {AIResponse} from "./model.aiResponse.ts";
-import {GEMINI_secret} from "./secret.ts";
-import {SYSTEM_PROMPT, SUMMARY_PROMPT, CONVERSATION_NAME_PROMPT} from "./utilities.ts";
+import type {AIResponse} from "../Model/model.aiResponse.ts";
+import {GEMINI_secret} from "../secret.ts";
+import {SYSTEM_PROMPT, SUMMARY_PROMPT, CONVERSATION_NAME_PROMPT} from "../Others/utilities.ts";
 
 const ai = new GoogleGenAI({
     apiKey: GEMINI_secret
@@ -11,30 +11,36 @@ const ai = new GoogleGenAI({
 
 
 
-export const aiResponse = async (
-    { question }: { question: string }
-): Promise<AIResponse> => {
+export const aiResponse = async ({
+                                     question,
+                                 }: {
+    question: string;
+}): Promise<AIResponse> => {
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: [
+                {
+                    role: "user",
+                    parts: [
+                        {
+                            text: `${SYSTEM_PROMPT}\n\nQuestion:\n${question}`,
+                        },
+                    ],
+                },
+            ],
+        });
 
-    const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: [
-            {
-                role: "user",
-                parts: [{
-                    text: `${SYSTEM_PROMPT}\n\nQuestion:\n${question}`
-                }]
-            }
-        ],
-    });
+        const rawText = response.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    const rawText =
-        response.candidates?.[0]?.content?.parts?.[0]?.text;
+        const cleaned = cleanJunkFromText({ text: rawText as string });
 
-    if (!rawText) {
-        throw new Error("Empty AI response");
+        // Ensure cleaned is of type AIResponse
+        return cleaned as AIResponse;
+    } catch (err) {
+        if (err instanceof Error) throw new Error(`AI request failed: ${err.message}`);
+        else throw new Error("AI request failed: Unknown error");
     }
-
-    return cleanJunkFromText({text: rawText})
 };
 
 

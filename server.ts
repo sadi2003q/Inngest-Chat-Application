@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 
-import { generateSummary } from "./src/GeminiResponse";
+import { generateSummary } from "./src/Gemini/GeminiResponse";
 
 const app = express();
 

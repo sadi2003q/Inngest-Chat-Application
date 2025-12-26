@@ -1,6 +1,6 @@
 // src/Utilities.ts
 
-import type {AIResponse} from "./model.aiResponse.ts";
+import type {AIResponse} from "../Model/model.aiResponse.ts";
 
 
 export const TAG_COLORS = [

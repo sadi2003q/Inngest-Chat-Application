@@ -5,9 +5,9 @@ import { MessageCircle, Settings, Trash2 } from "lucide-react"
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import React, { useRef, useEffect } from "react";
-import {TAG_COLORS} from "./utilities.ts";
-import type {AIResponse, Message} from "./model.aiResponse.ts";
+import React, { useRef, useEffect, useState } from "react";
+import {TAG_COLORS} from "../Others/utilities.ts";
+import type {AIResponse, Message} from "../Model/model.aiResponse.ts";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
@@ -368,6 +368,108 @@ const AIMessageRenderer = ({ data }: { data: AIResponse }) => {
 };
 
 
+interface ErrorToastProps {
+    text: string;
+    duration?: number; // ms before auto-dismiss
+    onClose?: () => void;
+}
+
+interface ErrorToastProps {
+    title: string;
+    description: string;
+    duration?: number;
+    onClose?: () => void;
+}
+
+export const ErrorToast = ({ text, duration = 5000, onClose }: ErrorToastProps) => {
+    const [visible, setVisible] = useState(true);
+    const [progress, setProgress] = useState(100);
+
+    useEffect(() => {
+        if (!visible) return;
+
+        const startTime = Date.now();
+
+        const interval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const remaining = Math.max(0, (duration - elapsed) / duration * 100);
+            setProgress(remaining);
+
+            if (remaining === 0) {
+                setVisible(false);
+                onClose?.();
+            }
+        }, 30);
+
+        const timer = setTimeout(() => {
+            setVisible(false);
+            onClose?.();
+        }, duration);
+
+        return () => {
+            clearInterval(interval);
+            clearTimeout(timer);
+        };
+    }, [duration, onClose, visible]);
+
+    if (!visible) return null;
+
+    const handleClose = () => {
+        setVisible(false);
+        onClose?.();
+    };
+
+    return (
+        <div
+            role="alert"
+            className="fixed bottom-6 right-6 z-50 w-full max-w-sm animate-in slide-in-from-bottom-4 fade-in duration-300"
+        >
+            <div className="relative overflow-hidden rounded-xl bg-gray-950/95 backdrop-blur-lg border border-rose-500/20 shadow-2xl">
+                {/* Progress bar */}
+                <div
+                    className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-100 ease-linear"
+                    style={{ width: `${progress}%` }}
+                />
+
+                <div className="flex items-start gap-4 p-5">
+                    {/* Error Icon */}
+                    <div className="flex-shrink-0 mt-0.5">
+                        <svg
+                            className="w-6 h-6 text-rose-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                            />
+                        </svg>
+                    </div>
+
+                    <div className="flex-1">
+                        <h3 className="text-sm font-semibold text-white">Error</h3>
+                        <p className="mt-1 text-sm text-gray-300 leading-relaxed break-words">{text}</p>
+                    </div>
+
+                    {/* Close Button */}
+                    <button
+                        onClick={handleClose}
+                        className="flex-shrink-0 ml-4 text-gray-400 hover:text-gray-200 transition-colors"
+                        aria-label="Close"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 
 
