@@ -76,7 +76,6 @@ export default function ChatInterface() {
             {/* 👇 Add this right here */}
             {errorMessage && (
                 <ErrorToast
-                    text={errorMessage}
                     duration={4000} // auto-dismiss after 4 seconds
                     onClose={() => setErrorMessage(null)} // reset error state
                     title={"Error"} description={errorMessage}

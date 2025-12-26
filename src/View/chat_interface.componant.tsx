@@ -368,11 +368,6 @@ const AIMessageRenderer = ({ data }: { data: AIResponse }) => {
 };
 
 
-interface ErrorToastProps {
-    text: string;
-    duration?: number; // ms before auto-dismiss
-    onClose?: () => void;
-}
 
 interface ErrorToastProps {
     title: string;
@@ -381,7 +376,7 @@ interface ErrorToastProps {
     onClose?: () => void;
 }
 
-export const ErrorToast = ({ text, duration = 5000, onClose }: ErrorToastProps) => {
+export const ErrorToast = ({ title, duration = 5000, onClose }: ErrorToastProps) => {
     const [visible, setVisible] = useState(true);
     const [progress, setProgress] = useState(100);
 
@@ -452,7 +447,7 @@ export const ErrorToast = ({ text, duration = 5000, onClose }: ErrorToastProps) 
 
                     <div className="flex-1">
                         <h3 className="text-sm font-semibold text-white">Error</h3>
-                        <p className="mt-1 text-sm text-gray-300 leading-relaxed break-words">{text}</p>
+                        <p className="mt-1 text-sm text-gray-300 leading-relaxed break-words">{title}</p>
                     </div>
 
                     {/* Close Button */}
