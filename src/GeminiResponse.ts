@@ -80,7 +80,7 @@ export const generateSummary = async ({
     question,
     finalText
 } : {
-    conversationSummary: () => string;
+    conversationSummary: string;
     question: string;
     finalText: string;
 }) => {
@@ -90,7 +90,7 @@ export const generateSummary = async ({
             role: "user",
             parts: [{
                 text: SUMMARY_PROMPT
-                    .replace("{{summary}}", conversationSummary())
+                    .replace("{{summary}}", conversationSummary)
                     .replace("{{question}}", question)
                     .replace("{{answer}}", finalText),
             }]

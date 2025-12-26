@@ -1,7 +1,7 @@
 // File: src/chat_controller.ts
 
-import {aiResponseStream, generateSummary} from "./GeminiResponse.ts";
-import type {Message} from "./model.aiResponse.ts";
+import {aiResponse, aiResponseStream, generateSummary} from "./GeminiResponse.ts";
+import type {AIResponse, Message} from "./model.aiResponse.ts";
 import React from "react";
 import {demoResponse, SYSTEM_PROMPT} from "./utilities.ts";
 
@@ -10,7 +10,7 @@ export class ChatController {
     private readonly setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
     private readonly setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
     private readonly messages: () => Message[]
-    private readonly conversationSummary: () => string;
+    private readonly conversationSummary: string;
     private readonly setConversationSummary: React.Dispatch<React.SetStateAction<string>>
 
 
@@ -24,7 +24,7 @@ export class ChatController {
         setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
         setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
         messages: () => Message[],
-        conversationSummary: () => string,
+        conversationSummary: string,
         setConversationSummary: React.Dispatch<React.SetStateAction<string>>,
     }) {
         this.setMessages = setMessages;
@@ -49,35 +49,37 @@ export class ChatController {
             this.setIsLoading(true) // Loading Starts
 
 
+            const prompt = this.buildContextPrompt(question);
+
             // 2️⃣ Call AI (replace aiResponse with your actual API call)
-            // const response: AIResponse = await aiResponse({ question });
-            await this.wait(2000) // Simulate Ai response waiting time.
+            const response: AIResponse = await aiResponse({ question: prompt });
+            // await this.wait(2000) // Simulate Ai response waiting time.
 
 
             // 3️⃣ Add AI structured message
             const aiMessage: Message = {
                 type: "ai-structured",
-                data: demoResponse,
+                data: response,
             };
             this.setMessages((prev) => [...prev, aiMessage]);
 
             // 4️⃣ Generate Summary through Inngest
-            await fetch("http://localhost:3001/api/send-summary", {
+            const inngestResponse = await fetch("http://localhost:3001/api/send-summary", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     question: {
-                        currentSummary: this.conversationSummary(),
-                        question: "What is the main idea?",
-                        finalAnswer: "This is the final answer",
+                        currentSummary: this.conversationSummary,
+                        question: question,
+                        finalAnswer: demoResponse,
                     },
                 }),
             });
 
+            const summary = await inngestResponse.json();
 
-            // console.log(inngestResponse);
-
-
+            console.log('Summary : \n' ,summary.data);
+            this.setConversationSummary(summary.data);
 
             return { success: true };
 
@@ -201,7 +203,7 @@ export class ChatController {
 ${SYSTEM_PROMPT}
 
 Conversation Summary:
-${this.conversationSummary() || "No prior conversation."}
+${this.conversationSummary || "No prior conversation."}
 
 Recent Messages:
 ${recentMessages}

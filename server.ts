@@ -23,12 +23,12 @@ app.use(
 );
 
 app.post("/api/send-summary", async (req, res) => {
-    await inngest.send({
+    const data = await inngest.send({
         name: "call/gemini",
-        data: req.body,
+        data: req.body.question
     });
 
-    res.json({ success: true });
+    res.json({ success: true, data: data });
 });
 
 app.listen(3001, () => {
