@@ -23,6 +23,9 @@ export default function ChatInterface() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [conversationSummary, setConversationSummary] = useState<string>("");
+    const [conversationHeading, setConversationHeading] = useState<string>("First Conversation");
+
+
 
     const controller = new ChatController({
         setMessages: setMessages,
@@ -30,6 +33,7 @@ export default function ChatInterface() {
         messages: () => messages,
         conversationSummary: conversationSummary,
         setConversationSummary: setConversationSummary,
+        setConversationHeading: setConversationHeading
     });
 
 
@@ -40,10 +44,10 @@ export default function ChatInterface() {
         setTextFieldMessage("");
 
         // Stream AI structured response
-        // await controller.getAnswerStream({question: textFieldMessage})
+        await controller.getAnswerStream({question: textFieldMessage})
 
         // Simulate AI response
-        await controller.getAnswer({question: textFieldMessage});
+        // await controller.getAnswer({question: textFieldMessage});
 
 
 
@@ -52,7 +56,7 @@ export default function ChatInterface() {
 
     return (
         <div className="w-screen h-screen bg-black text-white flex flex-col items-center justify-center py-3">
-            <ChatHeader name={"MD. Adnan Abdullah Sadi"} subtext={"User"} />
+            <ChatHeader name={conversationHeading} subtext={"User"} />
 
             <ChatWindow messages={messages} isLoading={isLoading} />
 

@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import type {AIResponse} from "./model.aiResponse.ts";
 import {GEMINI_secret} from "./secret.ts";
-import {SYSTEM_PROMPT, SUMMARY_PROMPT} from "./utilities.ts";
+import {SYSTEM_PROMPT, SUMMARY_PROMPT, CONVERSATION_NAME_PROMPT} from "./utilities.ts";
 
 const ai = new GoogleGenAI({
     apiKey: GEMINI_secret
@@ -113,6 +113,36 @@ export const generateSummary = async ({
 
 }
 
+
+
+export const ConversationName = async({conversationSummary}
+: {conversationSummary: string}) => {
+
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: [{
+                role: "user",
+                parts: [{
+                    text: CONVERSATION_NAME_PROMPT
+                        .replace("_CONVERSATION_SUMMARY_", conversationSummary)
+                }]
+            }]
+        })
+
+
+        return response.candidates?.[0]?.content?.parts?.[0]?.text ?? ""
+    } catch (e) {
+        let message = "";
+        if (e instanceof Error) {
+            message = e.message;
+        }
+
+        throw new Error(message);
+    }
+
+
+}
 
 
 

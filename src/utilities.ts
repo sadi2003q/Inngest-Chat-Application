@@ -219,6 +219,20 @@ Rules:
 - code field must be raw code as a string (no markdown)
 `;
 
+export const CONVERSATION_NAME_PROMPT = `
+    Please read this Conversation Summary and return me a Suitable name:
+    summary : _CONVERSATION_SUMMARY_
+    
+    Follow this exact typescript interface:
+    
+    {
+        "name": string,
+        "Date": Date,
+    }
+    
+`
+
+
 export const wait = ({ time }: { time: number }) => {
     return new Promise((resolve) => setTimeout(resolve, time));
 }

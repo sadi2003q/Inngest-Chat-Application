@@ -1,6 +1,6 @@
 // File: src/chat_controller.ts
 
-import {aiResponse, aiResponseStream, generateSummary} from "./GeminiResponse.ts";
+import {aiResponse, aiResponseStream, ConversationName, generateSummary} from "./GeminiResponse.ts";
 import type {AIResponse, Message} from "./model.aiResponse.ts";
 import React from "react";
 import {SYSTEM_PROMPT} from "./utilities.ts";
@@ -12,7 +12,7 @@ export class ChatController {
     private readonly messages: () => Message[]
     private readonly conversationSummary: string;
     private readonly setConversationSummary: React.Dispatch<React.SetStateAction<string>>
-
+    private readonly setConversationHeading: React.Dispatch<React.SetStateAction<string>>;
 
     constructor({
         setMessages,
@@ -20,18 +20,21 @@ export class ChatController {
         messages,
         conversationSummary,
         setConversationSummary,
+        setConversationHeading
     }: {
         setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
         setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
         messages: () => Message[],
         conversationSummary: string,
         setConversationSummary: React.Dispatch<React.SetStateAction<string>>,
+        setConversationHeading: React.Dispatch<React.SetStateAction<string>>,
     }) {
         this.setMessages = setMessages;
         this.setIsLoading = setIsLoading;
         this.setConversationSummary = setConversationSummary;
         this.messages = messages;
         this.conversationSummary = conversationSummary;
+        this.setConversationHeading = setConversationHeading;
     }
 
     // Method to send a question and get AI response
@@ -159,6 +162,10 @@ export class ChatController {
                 })
             )
 
+
+            if(this.messages().length > 5) await this.makeConversationName();
+
+
             // generate Summary
             const summary = await generateSummary({
                 conversationSummary: this.conversationSummary,
@@ -168,8 +175,6 @@ export class ChatController {
             })
 
             this.setConversationSummary(summary);
-
-
 
         } catch (error) {
 
@@ -186,10 +191,6 @@ export class ChatController {
         } finally {
             this.setIsLoading(false)
         }
-
-
-
-
 
 
     }
@@ -218,5 +219,25 @@ Current Question:
 ${question}
 `;
     }
+
+
+    makeConversationName = async () => {
+        try {
+
+            const name = await ConversationName({
+                conversationSummary: this.conversationSummary,
+            })
+
+            this.setConversationHeading(name);
+
+        } catch(error) {
+            if(error instanceof Error) {
+                console.log(error);
+            }
+        }
+    }
+
+
+
 }
 
