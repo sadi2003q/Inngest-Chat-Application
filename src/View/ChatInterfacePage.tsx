@@ -1,4 +1,4 @@
-// Filepath: src/View/chat_interface.tsx
+// Filepath: src/View/ChatInterfacePage.tsx
 
 import {useEffect, useState} from "react";
 
@@ -7,7 +7,7 @@ import {
     MessageSendButton,
     MessageSendField,
     ChatWindow, ErrorToast,
-} from "./chat_interface.componant.tsx";
+} from "./Components/chat_interface.componant.tsx";
 import type { Message } from "../Model/model.aiResponse.ts";
 import {ChatController} from "../Controller/controller.ts";
 

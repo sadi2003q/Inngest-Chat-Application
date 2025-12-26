@@ -232,7 +232,12 @@ export const CONVERSATION_NAME_PROMPT = `
     
 `
 
-
 export const wait = ({ time }: { time: number }) => {
     return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+
+export interface LoginStatus {
+    type: 'success' | 'error' | null;
+    message: string;
 }

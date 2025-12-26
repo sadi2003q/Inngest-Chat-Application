@@ -1,152 +1,117 @@
-// File: pages/AuthPage.tsx
-import { useState } from "react";
-import { Box, Button, Typography, Paper } from "@mui/material";
-import { NameField, EmailField, PasswordField, AIKeyField } from "./FormFields";
+import { useState, type ChangeEvent, type FormEvent } from 'react';
+import {
+    EmailDirection,
+    ErrorStatus,
+    Footer_Login,
+    LoginButton,
+    NavigationBar, SignUpDirection,
+    SignupHeading,
+    SignupUP_SocialMedia, SuccessStatus
+} from "./Components/SignupPage.component.tsx";
 
-export const AuthPage = () => {
-    // Signup states
-    const [name, setName] = useState("");
-    const [signupEmail, setSignupEmail] = useState("");
-    const [signupPassword, setSignupPassword] = useState("");
-    const [aiKey, setAiKey] = useState("");
 
-    // Login states
-    const [loginEmail, setLoginEmail] = useState("");
-    const [loginPassword, setLoginPassword] = useState("");
+import { type LoginStatus } from "../Others/utilities.ts";
 
-    const handleSignup = () => {
-        console.log({ name, email: signupEmail, password: signupPassword, aiKey });
+export default function AuthPage() {
+
+    const [formData, setFormData] = useState({ email: '', password: '', remember: false }); //
+    const [status, setStatus] = useState<LoginStatus>({  type: null, message: "" });
+
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { id, value, type, checked } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [id]: type === 'checkbox' ? checked : value,
+        }));
+    };
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        setStatus({ type: null, message: '' });
+
+        if (formData.email && formData.password.length >= 6) {
+            setStatus({ type: 'success', message: 'Login successful! Redirecting...' });
+            console.log(formData);
+        } else {
+            setStatus({ type: 'error', message: 'Invalid email or password. Please try again.' });
+        }
     };
 
-    const handleLogin = () => {
-        console.log({ email: loginEmail, password: loginPassword });
-    };
+
 
     return (
-        <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            minHeight="100vh"
-            p={2}
-            sx={{
-                background: "linear-gradient(to top right, #0f2027, #203a43)",
-            }}
-        >
-            <Box
-                display="flex"
-                flexDirection={{ xs: "column", sm: "row" }}
-                gap={{ xs: 4, sm: 3 }}
-                width="100%"
-                maxWidth="900px"
-                px={2}
-            >
-                {/* Signup Form */}
-                <Paper
-                    elevation={8}
-                    sx={{
-                        flex: 1,
-                        p: { xs: 4, sm: 5 },
-                        borderRadius: 4,
-                        bgcolor: "#1e1e1e",
-                        boxShadow: "0 8px 24px rgba(0,0,0,0.6)",
-                        border: "1px solid #444",
-                    }}
-                >
-                    <Typography
-                        variant="h4"
-                        mb={4}
-                        align="center"
-                        sx={{
-                            background: "linear-gradient(90deg, #67e8f9, #22d3ee)",
-                            WebkitBackgroundClip: "text",
-                            WebkitTextFillColor: "transparent",
-                            fontWeight: 700,
-                            letterSpacing: "1px",
-                            textTransform: "uppercase",
-                            textShadow: "0 2px 4px rgba(0,0,0,0.4)",
-                        }}
-                    >
-                        Sign Up
-                    </Typography>
+        <div className="min-h-screen bg-[#F9FAFB] flex flex-col font-sans text-[#475467]">
+            {/* Header */}
+            <NavigationBar/>
 
-                    <NameField value={name} onChange={setName} />
-                    <EmailField value={signupEmail} onChange={setSignupEmail} />
-                    <PasswordField value={signupPassword} onChange={setSignupPassword} />
-                    <AIKeyField value={aiKey} onChange={setAiKey} />
+            {/* Main Content */}
+            <main className="flex-1 flex items-center justify-center px-6 py-10 md:py-[60px]">
+                <div className="bg-white rounded-lg shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-8 md:p-12 w-full max-w-[440px]">
 
-                    <Button
-                        variant="contained"
-                        fullWidth
-                        sx={{
-                            mt: 3,
-                            py: 1.5,
-                            background: "#86efac",
-                            color: "#166534",
-                            fontWeight: 600,
-                            "&:hover": { bgcolor: "#74dab8" },
-                            borderRadius: 2,
-                            textTransform: "none",
-                            boxShadow: "0 4px 12px rgba(134,239,172,0.3)",
-                        }}
-                        onClick={handleSignup}
-                    >
-                        Sign Up
-                    </Button>
-                </Paper>
+                    <SignupHeading/>
 
-                {/* Login Form */}
-                <Paper
-                    elevation={8}
-                    sx={{
-                        flex: 1,
-                        p: { xs: 4, sm: 5 },
-                        borderRadius: 4,
-                        bgcolor: "#1e1e1e",
-                        boxShadow: "0 8px 24px rgba(0,0,0,0.6)",
-                        border: "1px solid #444",
-                    }}
-                >
-                    <Typography
-                        variant="h4"
-                        mb={4}
-                        align="center"
-                        sx={{
-                            background: "linear-gradient(90deg, #fcd34d, #fbbf24)",
-                            WebkitBackgroundClip: "text",
-                            WebkitTextFillColor: "transparent",
-                            fontWeight: 700,
-                            letterSpacing: "1px",
-                            textTransform: "uppercase",
-                            textShadow: "0 2px 4px rgba(0,0,0,0.4)",
-                        }}
-                    >
-                        Login
-                    </Typography>
+                    {/* Social Buttons */}
+                    <SignupUP_SocialMedia/>
 
-                    <EmailField value={loginEmail} onChange={setLoginEmail} />
-                    <PasswordField value={loginPassword} onChange={setLoginPassword} />
+                    <EmailDirection/>
 
-                    <Button
-                        variant="contained"
-                        fullWidth
-                        sx={{
-                            mt: 3,
-                            py: 1.5,
-                            background: "#86efac",
-                            color: "#166534",
-                            fontWeight: 600,
-                            "&:hover": { bgcolor: "#74dab8" },
-                            borderRadius: 2,
-                            textTransform: "none",
-                            boxShadow: "0 4px 12px rgba(134,239,172,0.3)",
-                        }}
-                        onClick={handleLogin}
-                    >
-                        Login
-                    </Button>
-                </Paper>
-            </Box>
-        </Box>
+                    {/* Status Messages */}
+                    {status.type === 'error' && <SuccessStatus message={status.message} />}
+                    {status.type === 'success' && <ErrorStatus message={status.message} />}
+
+                    {/*  Form  */}
+                    <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="email" className="text-sm font-medium text-[#101828]">Email address</label>
+                            <input
+                                type="email"
+                                id="email"
+                                className="px-4 py-3 border border-[#D0D5DD] rounded-lg text-base text-[#101828] bg-white focus:outline-none focus:border-[#FF5A1F] focus:ring-4 focus:ring-[#FF5A1F]/10 transition-all placeholder:text-[#98A2B3] min-h-[48px]"
+                                placeholder="you@example.com"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+
+
+                        <div className="flex flex-col gap-2">
+                            <label htmlFor="password" className="text-sm font-medium text-[#101828]">Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                className="px-4 py-3 border border-[#D0D5DD] rounded-lg text-base text-[#101828] bg-white focus:outline-none focus:border-[#FF5A1F] focus:ring-4 focus:ring-[#FF5A1F]/10 transition-all placeholder:text-[#98A2B3] min-h-[48px]"
+                                placeholder="Enter your password"
+                                value={formData.password}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 -mt-2">
+                            <div className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    id="remember"
+                                    className="w-4 h-4 cursor-pointer accent-[#FF5A1F]"
+                                    checked={formData.remember}
+                                    onChange={handleInputChange}
+                                />
+                                <label htmlFor="remember" className="text-sm text-[#475467] cursor-pointer">Remember me</label>
+                            </div>
+                            <a href="/forgot" className="text-[#FF5A1F] text-sm font-medium hover:text-[#D94816] transition-colors">
+                                Forgot password?
+                            </a>
+                        </div>
+
+                        <LoginButton/>
+                    </form>
+
+                    <SignUpDirection/>
+                </div>
+            </main>
+
+            <Footer_Login/>
+        </div>
     );
 };
+

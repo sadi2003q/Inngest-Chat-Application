@@ -6,8 +6,8 @@ import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import React, { useRef, useEffect, useState } from "react";
-import {TAG_COLORS} from "../Others/utilities.ts";
-import type {AIResponse, Message} from "../Model/model.aiResponse.ts";
+import {TAG_COLORS} from "../../Others/utilities.ts";
+import type {AIResponse, Message} from "../../Model/model.aiResponse.ts";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
