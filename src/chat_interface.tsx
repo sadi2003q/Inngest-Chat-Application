@@ -28,7 +28,7 @@ export default function ChatInterface() {
         setMessages: setMessages,
         setIsLoading: setIsLoading,
         messages: () => messages,
-        conversationSummary: () => conversationSummary,
+        conversationSummary: conversationSummary,
         setConversationSummary: setConversationSummary,
     });
 

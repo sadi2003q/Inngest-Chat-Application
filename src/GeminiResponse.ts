@@ -80,25 +80,37 @@ export const generateSummary = async ({
     question,
     finalText
 } : {
-    conversationSummary: () => string;
+    conversationSummary: string;
     question: string;
     finalText: string;
 }) => {
-    const aiResponse = await ai.models.generateContent({
-        model: "gemini-2.5-flash-lite",
-        contents: [{
-            role: "user",
-            parts: [{
-                text: SUMMARY_PROMPT
-                    .replace("{{summary}}", conversationSummary())
-                    .replace("{{question}}", question)
-                    .replace("{{answer}}", finalText),
-            }]
-        }]
-    })
-    console.log("Summary Created...")
 
-    return aiResponse.candidates?.[0]?.content?.parts?.[0]?.text ?? ""
+    try {
+        const aiResponse = await ai.models.generateContent({
+            model: "gemini-2.5-flash-lite",
+            contents: [{
+                role: "user",
+                parts: [{
+                    text: SUMMARY_PROMPT
+                        .replace("{{summary}}", conversationSummary)
+                        .replace("{{question}}", question)
+                        .replace("{{answer}}", finalText),
+                }]
+            }]
+        })
+        console.log("Summary Created...")
+
+        return aiResponse.candidates?.[0]?.content?.parts?.[0]?.text ?? ""
+    } catch (e) {
+        let message = "";
+        if (e instanceof Error) {
+            message = e.message;
+        }
+
+        throw new Error(message);
+    }
+
+
 }
 
 

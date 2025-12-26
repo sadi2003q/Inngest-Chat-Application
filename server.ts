@@ -1,8 +1,7 @@
 import express from "express";
 import cors from "cors";
-import { serve } from "inngest/express";
-import { inngest } from "./src/INNGEST/client";
-import { callGemini } from "./src/INNGEST/Functions/api-handler";
+
+import { generateSummary } from "./src/GeminiResponse";
 
 const app = express();
 
@@ -14,37 +13,30 @@ app.use(cors({
 
 app.use(express.json());
 
-app.use(
-    "/api/inngest",
-    serve({
-        client: inngest,
-        functions: [callGemini],
-    })
-);
+
 
 app.post("/api/send-summary", async (req, res) => {
+
     try {
-        const result = await inngest.send({
-            name: "call/gemini",
-            data: req.body,
-            waitForResponse: true, // ✅ wait for function completion
+        const { currentSummary, question, finalAnswer } = req.body.question;
+
+        const summary = await generateSummary({
+            conversationSummary: currentSummary,
+            question: question,
+            finalText: finalAnswer
         });
 
-        if (!result.success) {
-            return res.status(500).json({
-                success: false,
-                message: result.error || "Failed to generate summary",
-            });
-        }
+        return res.json({ success: true, data: summary });
 
-        res.json({ success: true, message: "Summary generated" });
+    } catch (error) {
+        console.error("Gemini Error:", error);
 
-    } catch (err) {
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
-            message: err instanceof Error ? err.message : "Something went wrong",
+            message: error instanceof Error ? error.message : "Unknown server error"
         });
     }
+
 });
 
 app.listen(3001, () => {
