@@ -1,15 +1,13 @@
-// FilePath: src/main.tsx
-
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
 import './index.css'
-import ChatInterface from './View/ChatInterfacePage.tsx'
-import AuthPage from "./View/SignupPage.tsx";
-import SignupPage from "./View/LoginPage.tsx";
-
+import App from './App'
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <SignupPage/>
-  </StrictMode>
+    <StrictMode>
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+    </StrictMode>
 )
