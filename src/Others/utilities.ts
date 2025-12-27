@@ -317,6 +317,12 @@ export const messages: User_msg[] = [
 
 
 
+export interface loginInterface {
+    email: string;
+    password: string;
+    remember: boolean;
+}
+
 
 export const wait = ({ time }: { time: number }) => {
     return new Promise((resolve) => setTimeout(resolve, time));
@@ -324,7 +330,7 @@ export const wait = ({ time }: { time: number }) => {
 
 
 export interface LoginStatus {
-    type: 'success' | 'error' | null;
+    type: "success" | "error" | null;
     message: string;
 }
 

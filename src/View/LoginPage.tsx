@@ -8,14 +8,25 @@ import {
     SignupHeading,
     SignupUP_SocialMedia, SuccessStatus
 } from "./Components/LoginPage.component.tsx";
+import { type LoginStatus, type loginInterface } from "../Others/utilities.ts";
+import {AuthenticationController} from "../Controller/Authentication.controller.ts";
 
 
-import { type LoginStatus } from "../Others/utilities.ts";
+
 
 export default function LoginPage() {
 
-    const [formData, setFormData] = useState({ email: '', password: '', remember: false }); //
+
+
+    const [formData, setFormData] = useState<loginInterface>({ email: '', password: '', remember: false }); //
     const [status, setStatus] = useState<LoginStatus>({  type: null, message: "" });
+
+    const controller = new AuthenticationController({
+        loginInformation: formData,
+        setStatus: setStatus,
+    });
+
+
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { id, value, type, checked } = e.target;
@@ -24,16 +35,11 @@ export default function LoginPage() {
             [id]: type === 'checkbox' ? checked : value,
         }));
     };
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        setStatus({ type: null, message: '' });
 
-        if (formData.email && formData.password.length >= 6) {
-            setStatus({ type: 'success', message: 'Login successful! Redirecting...' });
-            console.log(formData);
-        } else {
-            setStatus({ type: 'error', message: 'Invalid email or password. Please try again.' });
-        }
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        await controller.login();
     };
 
 
