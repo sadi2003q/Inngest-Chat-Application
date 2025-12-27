@@ -1,4 +1,6 @@
 import express from "express";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import cors from "cors";
 
 import { generateSummary } from "./src/Gemini/GeminiResponse";
