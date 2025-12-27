@@ -241,3 +241,7 @@ export interface LoginStatus {
     type: 'success' | 'error' | null;
     message: string;
 }
+
+export type EmptyListProps = {
+    makeNewFunction: () => void;
+};
