@@ -7,16 +7,15 @@ import {
     LoginHeader,
     API_indicator,
     Button_CreateAccount, Footer_Signup, Signup_Link,
-    SignupStatus
+    SignupStatus_View
 } from './Components/SignupPage.component.tsx'
+import type { user_info, SignupStatus} from "../Others/utilities.ts";
+
 
 
 
 // --- Types ---
-interface SignupStatus {
-    type: 'success' | 'error' | null;
-    message: string;
-}
+
 
 export default function SignupPage() {
     // --- State ---
@@ -25,13 +24,15 @@ export default function SignupPage() {
     const [showApiKey, setShowApiKey] = useState(false);
     const [status, setStatus] = useState<SignupStatus>({ type: null, message: '' });
 
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        apiKey: '',
-        terms: false,
+    const [formData, setFormData] = useState<user_info>({
+        info: {
+            firstName: "",
+            lastName: "",
+            email: "",
+            api: "",
+            terms: false
+        },
+        password: ""
     });
 
     // --- Helpers ---
@@ -58,7 +59,7 @@ export default function SignupPage() {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        if (!formData.terms) {
+        if (!formData.info.terms) {
             setStatus({
                 type: 'error',
                 message: 'You must agree to the terms.'
@@ -123,22 +124,22 @@ export default function SignupPage() {
                     </div>
 
                     {/* Alert Messages */}
-                    {status.type && <SignupStatus type={status.type} message={status.message} />}
+                    {status.type && <SignupStatus_View type={status.type} message={status.message} />}
 
                     <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
 
 
                         {/* Name Fields */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormInput label="First name" id="firstName" placeholder="John" value={formData.firstName}
+                            <FormInput label="First name" id="firstName" placeholder="John" value={formData.info.firstName}
                                        onChange={handleInputChange}/>
-                            <FormInput label="Last name" id="lastName" placeholder="Doe" value={formData.lastName}
+                            <FormInput label="Last name" id="lastName" placeholder="Doe" value={formData.info.lastName}
                                        onChange={handleInputChange}/>
                         </div>
 
                         {/* Email */}
                         <FormInput label="Email address" id="email" type="email" placeholder="you@example.com"
-                                   value={formData.email} onChange={handleInputChange}/>
+                                   value={formData.info.email} onChange={handleInputChange}/>
 
                         {/* Password */}
                         <div className="flex flex-col gap-2">

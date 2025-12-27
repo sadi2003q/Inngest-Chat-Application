@@ -334,6 +334,11 @@ export interface LoginStatus {
     message: string;
 }
 
+export interface SignupStatus {
+    type: 'success' | 'error' | null;
+    message: string;
+}
+
 export type EmptyListProps = {
     makeNewFunction: () => void;
 };
@@ -374,3 +379,29 @@ export interface SearchBarProps {
     searchQuery: string;
     onSearchChange: (value: string) => void;
 }
+
+
+export interface UserInformation {
+    firstName: string
+    lastName: string
+    email: string
+    api: string
+    terms: boolean
+
+}
+
+
+export interface user_info {
+    info: UserInformation
+    password: string
+}
+
+
+
+
+
+export const DatabaseName = {
+    UserDatabase: "Chat_User"
+} as const;
+
+

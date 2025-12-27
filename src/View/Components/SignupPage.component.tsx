@@ -101,7 +101,7 @@ export const Signup_Link = () => {
 }
 
 
-export const SignupStatus = ({type, message}: {type: string, message: string}) => {
+export const SignupStatus_View = ({type, message}: {type: string, message: string}) => {
     return (
         <div
             className={`mb-6 p-4 rounded-lg border text-sm ${type === 'error' ? 'bg-[#FEF3F2] border-[#FDA29B] text-[#B42318]' : 'bg-[#ECFDF3] border-[#6CE9A6] text-[#027A48]'}`}>

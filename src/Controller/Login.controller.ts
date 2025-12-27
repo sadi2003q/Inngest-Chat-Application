@@ -3,10 +3,10 @@ import {type loginInterface, type LoginStatus} from "../Others/utilities.ts";
 import {Authentication_Firestore} from '../Database/Authentication.ts'
 import React from "react";
 
-export class AuthenticationController {
+export class LoginController {
     private readonly loginInterface: loginInterface;
     private readonly setStatus:  React.Dispatch<React.SetStateAction<LoginStatus>>;
-    private controller: Authentication_Firestore = new Authentication_Firestore();
+    private server: Authentication_Firestore = new Authentication_Firestore();
 
 
 
@@ -28,7 +28,7 @@ export class AuthenticationController {
         }
         try {
             this.setStatus({ type: null, message: '' });
-            await this.controller.loginWithEmail({
+            await this.server.loginWithEmail({
                 email: this.loginInterface.email,
                 password: this.loginInterface.password
             })

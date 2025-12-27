@@ -9,7 +9,7 @@ import {
     SignupUP_SocialMedia, SuccessStatus
 } from "./Components/LoginPage.component.tsx";
 import { type LoginStatus, type loginInterface } from "../Others/utilities.ts";
-import {AuthenticationController} from "../Controller/Authentication.controller.ts";
+import {LoginController} from "../Controller/Login.controller.ts";
 
 
 
@@ -21,7 +21,7 @@ export default function LoginPage() {
     const [formData, setFormData] = useState<loginInterface>({ email: '', password: '', remember: false }); //
     const [status, setStatus] = useState<LoginStatus>({  type: null, message: "" });
 
-    const controller = new AuthenticationController({
+    const controller = new LoginController({
         loginInformation: formData,
         setStatus: setStatus,
     });
