@@ -232,6 +232,92 @@ export const CONVERSATION_NAME_PROMPT = `
     
 `
 
+export const messages: User_msg[] = [
+    {
+        id: 1,
+        title: "Product Comparison Analysis",
+        lastMessage: "Here's a detailed comparison of the top 5 smartphones in the market...",
+        timestamp: "2 hours ago",
+        status: "completed",
+        messageCount: 12
+    },
+    {
+        id: 2,
+        title: "Market Research Data",
+        lastMessage: "The market analysis shows significant growth in the AI sector with...",
+        timestamp: "5 hours ago",
+        status: "completed",
+        messageCount: 8
+    },
+    {
+        id: 3,
+        title: "Customer Feedback Summary",
+        lastMessage: "Based on the feedback from 150 customers, the main pain points are...",
+        timestamp: "Yesterday",
+        status: "completed",
+        messageCount: 15
+    },
+    {
+        id: 4,
+        title: "Quarterly Sales Report",
+        lastMessage: "Q4 sales performance exceeded expectations with a 23% increase...",
+        timestamp: "2 days ago",
+        status: "completed",
+        messageCount: 20
+    },
+    {
+        id: 5,
+        title: "Competitor Analysis",
+        lastMessage: "The competitive landscape shows three major players dominating...",
+        timestamp: "3 days ago",
+        status: "completed",
+        messageCount: 10
+    },
+    {
+        id: 6,
+        title: "User Demographics Study",
+        lastMessage: "Our primary user base consists of professionals aged 25-45 who...",
+        timestamp: "4 days ago",
+        status: "archived",
+        messageCount: 18
+    },
+    {
+        id: 7,
+        title: "Feature Request Analysis",
+        lastMessage: "The most requested features include dark mode, export to PDF...",
+        timestamp: "5 days ago",
+        status: "completed",
+        messageCount: 9
+    },
+    {
+        id: 8,
+        title: "Budget Planning 2024",
+        lastMessage: "The proposed budget allocates 40% to development, 30% to marketing...",
+        timestamp: "1 week ago",
+        status: "completed",
+        messageCount: 14
+    },
+    {
+        id: 9,
+        title: "Team Performance Metrics",
+        lastMessage: "Team productivity has increased by 15% since implementing the new...",
+        timestamp: "1 week ago",
+        status: "archived",
+        messageCount: 11
+    },
+    {
+        id: 10,
+        title: "Technology Stack Review",
+        lastMessage: "Our current tech stack includes React, Node.js, and PostgreSQL...",
+        timestamp: "2 weeks ago",
+        status: "completed",
+        messageCount: 7
+    }
+];
+
+
+
+
 export const wait = ({ time }: { time: number }) => {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
@@ -245,3 +331,40 @@ export interface LoginStatus {
 export type EmptyListProps = {
     makeNewFunction: () => void;
 };
+
+export interface User_msg {
+    id: number;
+    title: string;
+    lastMessage: string;
+    timestamp: string;
+    status: string;
+    messageCount: number;
+}
+
+export type MessageActionsProps = {
+    messageId: number;
+    onAction: (id: number) => void;
+};
+
+
+export interface PaginationProps {
+    currentPage: number;
+    totalPages: number;
+    filteredCount: number;
+    totalCount: number;
+    onPrevious: () => void;
+    onNext: () => void;
+    onPageClick: (page: number) => void;
+}
+
+
+export interface FilterProps {
+    filterStatus: string;
+    onFilterChange: (value: string) => void;
+    onNewMessage?: () => void;
+}
+
+export interface SearchBarProps {
+    searchQuery: string;
+    onSearchChange: (value: string) => void;
+}
