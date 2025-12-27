@@ -20,6 +20,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "firebase": "^12.7.0",
     "highlight.js": "^11.11.1",
     "inngest": "^3.48.1",
     "lucide-react": "^0.562.0",

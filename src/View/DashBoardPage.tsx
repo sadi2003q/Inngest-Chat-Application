@@ -24,7 +24,6 @@ export default function MessagesDashboard () {
         const matchesFilter = filterStatus === 'all' || msg.status === filterStatus;
         return matchesSearch && matchesFilter;
     });
-
     const handleSelectMessage = (id: number) => {
         setSelectedMessages(prev =>
             prev.includes(id)
@@ -35,13 +34,10 @@ export default function MessagesDashboard () {
 
         console.log(selectedMessages);
     };
-
     const handleNewMessage = () => {
         // navigate to Chat page or create a new message entry
         console.log("Creating a new message...");
     };
-
-
     const handlePageClick = (page: number) => {
         setCurrentPage(page);
         console.log("Go to Page:", currentPage);
