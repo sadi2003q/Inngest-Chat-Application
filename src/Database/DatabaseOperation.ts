@@ -4,7 +4,8 @@
 
 import {type All_Messages, DatabaseName, type User_msg, type UserInformation} from "../Others/utilities.ts";
 import {addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc} from "firebase/firestore";
-import {db} from "../firebase.ts"; // adjust path
+import {db} from "../firebase.ts";
+import type {AIResponse, Message} from "../Model/model.aiResponse.ts"; // adjust path
 
 
 export class DatabaseOperation {
@@ -130,10 +131,36 @@ export class DatabaseOperation {
         try {
             const ref = collection(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list, cID, DatabaseName.AllChats);
             const response = await getDocs(ref);
-
-            return response.docs.map(doc => {
+            
+            
+            const allMessages:unknown =  response.docs.map(doc => {
                 return {uid: doc.id, ...doc.data()};
             });
+            
+            
+            const messages: Message[] = [];
+            
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            for (const message of allMessages) {
+                if (message.isUser) {
+                    messages.push({
+                        type: "user",
+                        text: message.text, // assuming your message object has a 'text' property
+                    });
+                } else {
+                    messages.push({
+                        type: "ai-structured",
+                        data: message.text as AIResponse,
+                    });
+                }
+            }
+
+            return messages;
+            
+            
+            
+            
 
         } catch (error) {
             let message = "Error Saving Information into Firestore";

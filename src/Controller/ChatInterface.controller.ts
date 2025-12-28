@@ -3,8 +3,8 @@
 import {aiResponse, aiResponseStream, ConversationName, generateSummary} from "../Gemini/GeminiResponse.ts";
 import type {AIResponse, Message} from "../Model/model.aiResponse.ts";
 import React from "react";
-import {demoResponse, SYSTEM_PROMPT} from "../Others/utilities.ts";
-// import {DatabaseOperation} from "../Database/DatabaseOperation.ts";
+import {demoResponse, SYSTEM_PROMPT, type User_msg} from "../Others/utilities.ts";
+import {DatabaseOperation} from "../Database/DatabaseOperation.ts";
 
 
 export class ChatController {
@@ -16,7 +16,7 @@ export class ChatController {
     private readonly setConversationHeading: React.Dispatch<React.SetStateAction<string>>;
     private readonly setErrorMessage: React.Dispatch<React.SetStateAction<null | string>>;
 
-    // private server = new DatabaseOperation()
+    private server = new DatabaseOperation()
 
     constructor({
         setMessages,
@@ -171,6 +171,35 @@ export class ChatController {
         }
     }
 
+
+
+    // --- Database Operation ---
+    getAllConversation_text = async ({id, cid}: {id: string, cid: string}) => {
+        try {
+            const response = await this.server.getAllConversationMessage({
+                id: id,
+                cID: cid
+            })
+            this.setMessages(response);
+        } catch(error) {
+            if(error instanceof Error)  this.setErrorMessage(error.message);
+        }
+
+    }
+
+    addToDatabase = async ({id, cid, userMessage}: {
+        id: string,
+        cid: string,
+        userMessage?: string,
+        aiMessage?: AIResponse,
+    }) => {
+
+        let message : User_msg = {
+
+        }
+
+
+    }
 
 
 
