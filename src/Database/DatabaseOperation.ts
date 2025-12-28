@@ -2,7 +2,13 @@
 // filePath : src/Database/DatabaseOperation.ts
 
 
-import {type All_Messages, DatabaseName, type User_msg, type UserInformation} from "../Others/utilities.ts";
+import {
+    type All_Messages,
+    type ConversationMessage,
+    DatabaseName,
+    type User_msg,
+    type UserInformation
+} from "../Others/utilities.ts";
 import {addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc} from "firebase/firestore";
 import {db} from "../firebase.ts";
 import type {AIResponse, Message} from "../Model/model.aiResponse.ts"; // adjust path
@@ -108,14 +114,11 @@ export class DatabaseOperation {
         }
     }
 
-    addConversation = async ({uid, cID, message, isUser}: {uid: string, cID: string, message: User_msg, isUser: boolean}) => {
+    addMessage = async ({uid, cID, message}: {uid: string, cID: string, message: ConversationMessage}) => {
         try {
 
             const ref = collection(db, DatabaseName.UserDatabase, uid, DatabaseName.AllChats_list, cID, DatabaseName.AllChats);
-            await addDoc(ref, {
-                ...message,
-                isUser: isUser,
-            })
+            await addDoc(ref, message)
 
         } catch (error) {
             let message = "Error Saving Information into Firestore";

@@ -406,6 +406,15 @@ export interface All_Messages {
 
 }
 
+export interface ConversationMessage {
+    text: string | AIResponse;
+    id: number;
+    time: Date;
+    isUser: boolean;
+}
+
+
+
 
 
 export const DatabaseName = {

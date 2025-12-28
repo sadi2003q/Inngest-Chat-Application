@@ -3,8 +3,9 @@
 import {aiResponse, aiResponseStream, ConversationName, generateSummary} from "../Gemini/GeminiResponse.ts";
 import type {AIResponse, Message} from "../Model/model.aiResponse.ts";
 import React from "react";
-import {demoResponse, SYSTEM_PROMPT, type User_msg} from "../Others/utilities.ts";
+import {type ConversationMessage, demoResponse, SYSTEM_PROMPT} from "../Others/utilities.ts";
 import {DatabaseOperation} from "../Database/DatabaseOperation.ts";
+
 
 
 export class ChatController {
@@ -62,10 +63,18 @@ export class ChatController {
 
 
             // 2️⃣ Call AI (replace aiResponse with your actual API call)
-            const prompt = this.buildContextPrompt(question);
-            const response: AIResponse = await aiResponse({ question: prompt });
-            console.log(response);
-            // await this.wait(2000) // Simulate Ai response waiting time.
+            // const prompt = this.buildContextPrompt(question);
+            // const response: AIResponse = await aiResponse({ question: prompt });
+            // console.log(response);
+            this.wait(2000) // Simulate Ai response waiting time.
+
+            await this.addToDatabase({
+                id: "LFDQSylp5wUog1kt7tEOG4xTAxx2",
+                cid:  "1234",
+                message: question,
+                count: 0,
+                isUser: true
+            })
 
 
             // 3️⃣ Add AI structured message
@@ -75,8 +84,27 @@ export class ChatController {
             };
             this.setMessages((prev) => [...prev, aiMessage]);
 
+            // await this.addToDatabase({
+            //     id: "LFDQSylp5wUog1kt7tEOG4xTAxx2",
+            //     cid: Date.now().toString(),
+            //     message: demoResponse,
+            //     count: 0,
+            //     isUser: false
+            // })
+            await this.addToDatabase({
+                id: "LFDQSylp5wUog1kt7tEOG4xTAxx2",
+                cid:  "1234",
+                message: JSON.stringify(demoResponse) ,
+                count: 0,
+                isUser: true
+            })
+
         } catch (error) {
-            if (error instanceof Error)  this.handleError(error);
+            console.log(error)
+            if (error instanceof Error) {
+                console.log(error.message);
+                this.handleError(error);
+            }
         } finally {
             this.setIsLoading(false); // Loading ends
         }
@@ -182,23 +210,34 @@ export class ChatController {
             })
             this.setMessages(response);
         } catch(error) {
-            if(error instanceof Error)  this.setErrorMessage(error.message);
+            if(error instanceof Error)  this.handleError(error);
         }
 
     }
 
-    addToDatabase = async ({id, cid, userMessage}: {
+    addToDatabase = async ({id, cid, message, count, isUser}: {
         id: string,
         cid: string,
-        userMessage?: string,
-        aiMessage?: AIResponse,
+        message: string | AIResponse,
+        count?: number,
+        isUser:boolean
     }) => {
 
-        let message : User_msg = {
+        const conversationMessage: ConversationMessage = {
+            text: message,
+            id: count ?? Date.now(), // fallback unique id
+            time: new Date(),
+            isUser: isUser
+        };
 
-        }
-
-
+        try {
+            await this.server.addMessage({
+                uid: id,
+                cID: cid,
+                message: conversationMessage,
+            })
+            console.log("Saved to Database")
+        } catch (error) { if(error instanceof Error)  this.handleError(error); }
     }
 
 
