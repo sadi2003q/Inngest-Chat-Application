@@ -68,7 +68,7 @@ export default function ChatInterface() {
 
 
     return (
-        <div className="w-screen h-screen bg-black text-white flex flex-col items-center justify-center py-3">
+        <div className="w-screen h-screen text-white flex flex-col items-center justify-center py-3">
             <ChatHeader name={conversationHeading} subtext={"User"} />
 
             <ChatWindow messages={messages} isLoading={isLoading} />
@@ -78,7 +78,7 @@ export default function ChatInterface() {
                 <ErrorToast
                     duration={4000} // auto-dismiss after 4 seconds
                     onClose={() => setErrorMessage(null)} // reset error state
-                    title={"Error"} description={errorMessage}
+                    title={"Error"}
                 />
             )}
 

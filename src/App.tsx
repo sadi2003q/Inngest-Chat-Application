@@ -7,7 +7,7 @@ import MessagesDashboard from "./View/DashBoardPage.tsx";
 export default function App() {
     return (
         <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/" element={<Navigate to="/chat" replace />} />
 
 
             <Route path="/signup" element={<SignupPage />} />
