@@ -1,6 +1,6 @@
 // Filepath: src/View/ChatInterfacePage.tsx
 
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {
     ChatHeader,
@@ -65,6 +65,24 @@ export default function ChatInterface() {
 
 
     }
+
+
+
+
+    const hasFetched = React.useRef(false);
+
+    useEffect(() => {
+        if (hasFetched.current) return;
+        hasFetched.current = true;
+
+        controller.getAllConversation_text({
+            id: "LFDQSylp5wUog1kt7tEOG4xTAxx2",
+            cid: "1234",
+        }).then();
+    }, []);
+
+
+
 
 
     return (

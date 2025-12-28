@@ -96,7 +96,7 @@ export class ChatController {
                 cid:  "1234",
                 message: JSON.stringify(demoResponse) ,
                 count: 0,
-                isUser: true
+                isUser: false
             })
 
         } catch (error) {
@@ -209,12 +209,12 @@ export class ChatController {
                 cID: cid
             })
             this.setMessages(response);
+            console.log("Fetched");
         } catch(error) {
             if(error instanceof Error)  this.handleError(error);
         }
 
     }
-
     addToDatabase = async ({id, cid, message, count, isUser}: {
         id: string,
         cid: string,

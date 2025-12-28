@@ -9,7 +9,7 @@ import {
     type User_msg,
     type UserInformation
 } from "../Others/utilities.ts";
-import {addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc} from "firebase/firestore";
+import {addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc, query, orderBy} from "firebase/firestore";
 import {db} from "../firebase.ts";
 import type {AIResponse, Message} from "../Model/model.aiResponse.ts"; // adjust path
 
@@ -133,7 +133,9 @@ export class DatabaseOperation {
     getAllConversationMessage = async ({id, cID}: {id: string, cID: string}) => {
         try {
             const ref = collection(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list, cID, DatabaseName.AllChats);
-            const response = await getDocs(ref);
+            // 🔑 ORDER BY time (ascending)
+            const q = query(ref, orderBy("time", "asc"));
+            const response = await getDocs(q);
             
             
             const allMessages:unknown =  response.docs.map(doc => {
@@ -154,7 +156,7 @@ export class DatabaseOperation {
                 } else {
                     messages.push({
                         type: "ai-structured",
-                        data: message.text as AIResponse,
+                        data: JSON.parse(message.text) as AIResponse,
                     });
                 }
             }
