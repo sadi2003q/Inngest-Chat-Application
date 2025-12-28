@@ -1,5 +1,5 @@
 
-// filepath: src/Controller/SignUp.controller.ts
+// filepath: src/Controller/SignUp.ChatInterface.controller.ts
 
 import type {SignupStatus, user_info} from "../Others/utilities.ts";
 import React from "react";
@@ -30,7 +30,7 @@ export class SignUpController {
 
             this.setStatus({ type: 'success', message: 'Signup Successful' });
 
-
+            return uid;
         } catch (error) {
             if(error instanceof Error) {
                 this.setStatus({ type: 'error', message: error.message });

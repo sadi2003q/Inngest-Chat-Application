@@ -10,6 +10,7 @@ import {
 } from "./Components/LoginPage.component.tsx";
 import { type LoginStatus, type loginInterface } from "../Others/utilities.ts";
 import {LoginController} from "../Controller/Login.controller.ts";
+import {useAuth} from "../AuthContext.tsx";
 
 
 
@@ -17,10 +18,14 @@ import {LoginController} from "../Controller/Login.controller.ts";
 export default function LoginPage() {
 
 
-
+    // User Information and Status
     const [formData, setFormData] = useState<loginInterface>({ email: '', password: '', remember: false }); //
     const [status, setStatus] = useState<LoginStatus>({  type: null, message: "" });
 
+    // Global Context
+    const { setUid } = useAuth();
+
+    // Controller class
     const controller = new LoginController({
         loginInformation: formData,
         setStatus: setStatus,
@@ -35,11 +40,10 @@ export default function LoginPage() {
             [id]: type === 'checkbox' ? checked : value,
         }));
     };
-
-
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        await controller.login();
+        const uid = await controller.login();
+        if(uid) setUid(uid);
     };
 
 

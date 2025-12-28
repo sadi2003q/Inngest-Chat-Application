@@ -2,11 +2,9 @@
 // filePath : src/Database/DatabaseOperation.ts
 
 
-import {DatabaseName, type UserInformation} from "../Others/utilities.ts";
-import { doc, setDoc, deleteDoc } from "firebase/firestore";
-import { db } from "../firebase.ts"; // adjust path
-
-
+import {type All_Messages, DatabaseName, type User_msg, type UserInformation} from "../Others/utilities.ts";
+import {doc, collection, deleteDoc, addDoc, updateDoc, getDocs, setDoc} from "firebase/firestore";
+import {db} from "../firebase.ts"; // adjust path
 
 
 export class DatabaseOperation {
@@ -18,10 +16,7 @@ export class DatabaseOperation {
     }) => {
         try {
 
-
-            console.log("ID : ", id);
-
-            const ref = doc(db, "Chat_User", id);
+            const ref = doc(db, DatabaseName.UserDatabase, id);
             await setDoc(ref, {
                 ...userInformation,
                 createdAt: new Date(),
@@ -37,11 +32,116 @@ export class DatabaseOperation {
         }
     }
 
-
     DeleteUser_fromFirestore = async({id}: {id: string}) => {
         try {
             const ref = doc(db, DatabaseName.UserDatabase, id);
             await deleteDoc(ref);
+        } catch (error) {
+            let message = "Error Saving Information into Firestore";
+               if(error instanceof Error) {
+                message = error.message;
+            }
+
+            throw new Error(message);
+        }
+    }
+
+    createNewConversation = async ({id, messageHeader}: {id: string, messageHeader: All_Messages}) => {
+        try {
+
+            const ref = collection(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list);
+            await addDoc(ref, messageHeader);
+        } catch (error) {
+            let message = "Error Saving Information into Firestore";
+            if(error instanceof Error) {
+                message = error.message;
+            }
+
+            throw new Error(message);
+        }
+    }
+
+    getAllConversationList = async ({id}: {id: string}) => {
+        try {
+            const ref = collection(db, DatabaseName.UserDatabase, id);
+            const response = await getDocs(ref);
+
+            // Map through documents and include the UID as the first element
+            return response.docs.map(doc => {
+                return {uid: doc.id, ...doc.data()};
+            });
+
+        } catch (error) {
+            let message = "Error Saving Information into Firestore";
+            if(error instanceof Error) {
+                message = error.message;
+            }
+
+            throw new Error(message);
+        }
+    }
+
+    addConversation = async ({uid, cID, message, isUser}: {uid: string, cID: string, message: User_msg, isUser: boolean}) => {
+        try {
+
+            const ref = collection(db, DatabaseName.UserDatabase, uid, DatabaseName.AllChats_list, cID, DatabaseName.AllChats);
+            await addDoc(ref, {
+                ...message,
+                isUser: isUser,
+            })
+
+        } catch (error) {
+            let message = "Error Saving Information into Firestore";
+            if(error instanceof Error) {
+                message = error.message;
+            }
+
+            throw new Error(message);
+        }
+    }
+
+    getAllConversation = async ({id, cID}: {id: string, cID: string}) => {
+        try {
+            const ref = collection(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list, cID, DatabaseName.AllChats);
+            const response = await getDocs(ref);
+
+            return response.docs.map(doc => {
+                return {uid: doc.id, ...doc.data()};
+            });
+
+        } catch (error) {
+            let message = "Error Saving Information into Firestore";
+            if(error instanceof Error) {
+                message = error.message;
+            }
+
+            throw new Error(message);
+        }
+    }
+
+    updateSummary = async ({id, cID, summary}: {id: string, cID: string, summary: string}) => {
+        try {
+            const ref = doc(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list, cID)
+            await updateDoc(ref, {
+                summary: summary,
+            });
+        } catch (error) {
+            let message = "Error Saving Information into Firestore";
+            if(error instanceof Error) {
+                message = error.message;
+            }
+
+            throw new Error(message);
+        }
+    }
+
+    updateMessageList = async ({id, cID, lastMessage, lastMessage_time}: {id: string, cID: string, lastMessage: string, lastMessage_time: Date}) => {
+        try {
+            const ref = doc(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list, cID)
+            await updateDoc(ref, {
+                lastMessage: lastMessage,
+                lastMessage_time: lastMessage_time,
+            });
         } catch (error) {
             let message = "Error Saving Information into Firestore";
             if(error instanceof Error) {

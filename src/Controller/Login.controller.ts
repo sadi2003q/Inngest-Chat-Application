@@ -28,7 +28,7 @@ export class LoginController {
         }
         try {
             this.setStatus({ type: null, message: '' });
-            await this.server.loginWithEmail({
+            const credential = await this.server.loginWithEmail({
                 email: this.loginInterface.email,
                 password: this.loginInterface.password
             })
@@ -37,7 +37,7 @@ export class LoginController {
                 type: 'success' ,
                 message: 'Login successfully'
             })
-
+            return credential.user.uid;
         } catch (error) {
             if(error instanceof Error) {
                 this.setStatus({

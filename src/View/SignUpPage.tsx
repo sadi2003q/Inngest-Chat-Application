@@ -14,6 +14,7 @@ import {
 } from './Components/SignupPage.component.tsx'
 import type { user_info, SignupStatus} from "../Others/utilities.ts";
 import {SignUpController} from "../Controller/SignUp.controller.ts";
+import {useAuth} from "../AuthContext.tsx";
 
 
 
@@ -27,7 +28,6 @@ export default function SignupPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [showApiKey, setShowApiKey] = useState(false);
     const [status, setStatus] = useState<SignupStatus>({ type: null, message: '' });
-
     const [formData, setFormData] = useState<user_info>({
         info: {
             firstName: "",
@@ -38,6 +38,12 @@ export default function SignupPage() {
         },
         password: ""
     });
+
+    // Global Context
+    const { setUid, setUserName } = useAuth();
+
+
+
 
     const controller = new SignUpController({
         userInfo: formData,
@@ -68,7 +74,11 @@ export default function SignupPage() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        try { await controller.SignUp(); }
+        try {
+            const uid = await controller.SignUp();
+            if(uid) setUid(uid);
+            setUserName(formData.info.firstName + " " + formData.info.lastName);
+        }
         catch (error) { if(error instanceof Error) console.log(error.message); }
     };
 

@@ -54,7 +54,7 @@ export class Authentication_Firestore {
 
 
 
-const authService = new Authentication_Firestore();
+// const authService = new Authentication_Firestore();
 
 
 
@@ -63,15 +63,15 @@ const authService = new Authentication_Firestore();
 //     email: "test@example.com",
 //     password: "123456"
 // })
-
-try {
-    const result = await authService.loginWithEmail({
-        email: "ttest@example.com",
-        password: "123456"
-    });
-    console.log("Login Successful:", result.user.uid);
-} catch (error) {
-    if(error instanceof Error) {
-        console.log("Login Failed:", error.message);
-    }
-}
+//
+// try {
+//     const result = await authService.loginWithEmail({
+//         email: "ttest@example.com",
+//         password: "123456"
+//     });
+//     console.log("Login Successful:", result.user.uid);
+// } catch (error) {
+//     if(error instanceof Error) {
+//         console.log("Login Failed:", error.message);
+//     }
+// }

@@ -396,12 +396,24 @@ export interface user_info {
     password: string
 }
 
+export interface All_Messages {
+    createdAt: Date,
+    Summary: string,
+    title: string,
+    isArchived: boolean,
+    lastMessage_time: Date,
+    lastMessage: string
 
+}
 
 
 
 export const DatabaseName = {
-    UserDatabase: "Chat_User"
+    UserDatabase: "Chat_User",
+    AllChats_list: "All_Messages_List",
+    AllChats: "All_Messages"
+
+
 } as const;
 
 

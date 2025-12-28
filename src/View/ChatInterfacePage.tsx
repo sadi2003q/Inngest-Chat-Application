@@ -9,7 +9,7 @@ import {
     ChatWindow, ErrorToast,
 } from "./Components/chat_interface.componant.tsx";
 import type { Message } from "../Model/model.aiResponse.ts";
-import {ChatController} from "../Controller/controller.ts";
+import {ChatController} from "../Controller/ChatInterface.controller.ts";
 
 
 
