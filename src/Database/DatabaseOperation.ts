@@ -3,12 +3,14 @@
 
 
 import {type All_Messages, DatabaseName, type User_msg, type UserInformation} from "../Others/utilities.ts";
-import {doc, collection, deleteDoc, addDoc, updateDoc, getDocs, setDoc} from "firebase/firestore";
+import {addDoc, collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc} from "firebase/firestore";
 import {db} from "../firebase.ts"; // adjust path
 
 
 export class DatabaseOperation {
 
+
+    // ***  User Information Related Query  ***
 
     Save_UserInformation = async ({userInformation, id} : {
         userInformation: UserInformation,
@@ -46,6 +48,28 @@ export class DatabaseOperation {
         }
     }
 
+    getUserInformation = async ({id}: {id: string}) => {
+        try {
+            const ref = doc(db, DatabaseName.UserDatabase, id);
+            return await getDoc(ref);
+        } catch (error) {
+            let message = "Error Saving Information into Firestore";
+            if(error instanceof Error) {
+                message = error.message;
+            }
+
+            throw new Error(message);
+        }
+    }
+
+
+
+
+
+
+
+    // ***  All conversation Related Query  ***
+
     createNewConversation = async ({id, messageHeader}: {id: string, messageHeader: All_Messages}) => {
         try {
 
@@ -68,8 +92,10 @@ export class DatabaseOperation {
 
             // Map through documents and include the UID as the first element
             return response.docs.map(doc => {
-                return {uid: doc.id, ...doc.data()};
+                return { uid: doc.id, ...(doc.data() as User_msg) };
             });
+
+
 
         } catch (error) {
             let message = "Error Saving Information into Firestore";
@@ -100,7 +126,7 @@ export class DatabaseOperation {
         }
     }
 
-    getAllConversation = async ({id, cID}: {id: string, cID: string}) => {
+    getAllConversationMessage = async ({id, cID}: {id: string, cID: string}) => {
         try {
             const ref = collection(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list, cID, DatabaseName.AllChats);
             const response = await getDocs(ref);

@@ -4,6 +4,7 @@ import {aiResponse, aiResponseStream, ConversationName, generateSummary} from ".
 import type {AIResponse, Message} from "../Model/model.aiResponse.ts";
 import React from "react";
 import {demoResponse, SYSTEM_PROMPT} from "../Others/utilities.ts";
+// import {DatabaseOperation} from "../Database/DatabaseOperation.ts";
 
 
 export class ChatController {
@@ -14,6 +15,8 @@ export class ChatController {
     private readonly setConversationSummary: React.Dispatch<React.SetStateAction<string>>
     private readonly setConversationHeading: React.Dispatch<React.SetStateAction<string>>;
     private readonly setErrorMessage: React.Dispatch<React.SetStateAction<null | string>>;
+
+    // private server = new DatabaseOperation()
 
     constructor({
         setMessages,
@@ -41,7 +44,7 @@ export class ChatController {
         this.setErrorMessage = setErrorMessage;
     }
 
-    // Method to send a question and get AI response
+    // --- Generate Answer from Gemini ---
     getAnswer = async ({ question }: { question: string }) => {
         if (!question.trim()) return { success: false, error: "Empty question" };
 
@@ -80,8 +83,6 @@ export class ChatController {
 
         return { success: false };
     };
-
-
     getAnswerStream = async ({ question }: { question: string }) => {
 
         if(!question.trim()) return { success: false, error: {message: "Empty question"} };
@@ -152,33 +153,6 @@ export class ChatController {
 
 
     }
-
-
-    wait = (ms: number) =>
-        new Promise((resolve) => setTimeout(resolve, ms));
-
-    buildContextPrompt = (question: string) => {
-        const recentMessages = this.messages()
-            .filter(m => m.type === "user" || m.type === "ai-text")
-            .slice(-6)
-            .map(m => `${m.type === "user" ? "User" : "AI"}: ${m.text}`)
-            .join("\n");
-
-        return `
-${SYSTEM_PROMPT}
-
-Conversation Summary:
-${this.conversationSummary || "No prior conversation."}
-
-Recent Messages:
-${recentMessages}
-
-Current Question:
-${question}
-`;
-    }
-
-
     makeConversationName = async () => {
         try {
 
@@ -199,6 +173,34 @@ ${question}
 
 
 
+
+
+
+
+    // --- Helper Function ---
+    wait = (ms: number) => {
+        new Promise((resolve) => setTimeout(resolve, ms)).then();
+    }
+    buildContextPrompt = (question: string) => {
+        const recentMessages = this.messages()
+            .filter(m => m.type === "user" || m.type === "ai-text")
+            .slice(-6)
+            .map(m => `${m.type === "user" ? "User" : "AI"}: ${m.text}`)
+            .join("\n");
+
+        return `
+${SYSTEM_PROMPT}
+
+Conversation Summary:
+${this.conversationSummary || "No prior conversation."}
+
+Recent Messages:
+${recentMessages}
+
+Current Question:
+${question}
+`;
+    }
     handleError = (error: Error) => {
         let errorText = "Something went wrong";
 

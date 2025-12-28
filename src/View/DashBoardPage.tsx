@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {
     Dashboard_NavigationBar,
     DashboardPage_EmptyList, DashboardPage_Footer,
     DashboardPage_Heading, DashboardPage_MessageList, MessageActions, MessageFilter,
     Pagination, SearchBar
 } from "./Components/DashboardPage.component.tsx";
-import {messages} from "../Others/utilities.ts";
+import {messages, type User_msg} from "../Others/utilities.ts";
+import {DashboardController} from "../Controller/Dashboard.controller.ts";
+import {useAuth} from "../AuthContext.tsx";
 
 
 export default function MessagesDashboard () {
@@ -14,11 +16,21 @@ export default function MessagesDashboard () {
     const [filterStatus, setFilterStatus] = useState('all');
     const [selectedMessages, setSelectedMessages] = useState<number[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [messageHeader, setMessageHeader] = useState<User_msg[]>(messages);
+
+    // Global Context
+    const { uid } = useAuth();
+
+
+    // Controller Class
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const controller = new DashboardController({
+        setMessageHeader: setMessageHeader,
+    })
 
 
 
-
-    const filteredMessages = messages.filter(msg => {
+    const filteredMessages = messageHeader.filter(msg => {
         const matchesSearch = msg.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             msg.lastMessage.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesFilter = filterStatus === 'all' || msg.status === filterStatus;
@@ -48,6 +60,22 @@ export default function MessagesDashboard () {
     // @ts-expect-error
     const changeFilter = (e) => setFilterStatus(e.target.value)
     const SignOut_Function = () => console.log("SignOutFunction()")
+
+
+
+    const hasFetched = useRef(false);
+
+    useEffect(() => {
+        if (!uid || hasFetched.current) return;
+
+        hasFetched.current = true; // Mark as executed
+
+        const load = async () => {
+            await controller.fetchAllMessageList({ id: uid })
+        };
+
+        load().then();
+    }, [controller, uid]);
 
 
     return (
