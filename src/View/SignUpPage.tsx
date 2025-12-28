@@ -1,4 +1,7 @@
-import { useState, type ChangeEvent, type FormEvent } from 'react';
+
+// filepath: src/View.SignUpPage.tsx
+
+import {useState, type ChangeEvent, type FormEvent, useEffect} from 'react';
 
 import {
     NavigationBar,
@@ -10,6 +13,7 @@ import {
     SignupStatus_View
 } from './Components/SignupPage.component.tsx'
 import type { user_info, SignupStatus} from "../Others/utilities.ts";
+import {SignUpController} from "../Controller/SignUp.controller.ts";
 
 
 
@@ -35,47 +39,61 @@ export default function SignupPage() {
         password: ""
     });
 
+    const controller = new SignUpController({
+        userInfo: formData,
+        setStatus: setStatus,
+    })
+
     // --- Helpers ---
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { id, value, type, checked } = e.target;
         const newValue = type === 'checkbox' ? checked : value;
 
-        setFormData((prev) => ({ ...prev, [id]: newValue }));
-
-        // Logic to move progress steps based on field completion
-        if (id === 'email' && value.includes('@')) setCurrentStep(2);
-        if (id === 'apiKey' && value.length > 10) setCurrentStep(3);
-    };
-
-    const getPasswordStrength = () => {
-        const pwd = formData.password;
-        let strength = 0;
-        if (pwd.length >= 8) strength++;
-        if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) strength++;
-        if (/[0-9]/.test(pwd)) strength++;
-        if (/[^a-zA-Z0-9]/.test(pwd)) strength++;
-        return strength;
-    };
-
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        if (!formData.info.terms) {
-            setStatus({
-                type: 'error',
-                message: 'You must agree to the terms.'
-            });
-            return;
+        if (id in formData.info) {
+            setFormData(prev => ({
+                ...prev,
+                info: {
+                    ...prev.info,
+                    [id]: newValue,
+                },
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [id]: newValue,
+            }));
         }
-        setStatus({
-            type: 'success',
-            message: 'Account created! Redirecting to setup...'
-        });
-
-        console.log('Data : ', formData);
 
     };
 
-    const strength = getPasswordStrength();
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        try { await controller.SignUp(); }
+        catch (error) { if(error instanceof Error) console.log(error.message); }
+    };
+
+    const strength = controller.getPasswordStrength()
+
+
+
+    useEffect(() => {
+        const { firstName, lastName, email, api } = formData.info;
+
+        if (
+            firstName &&
+            lastName &&
+            email.includes("@") &&
+            formData.password.length >= 8 &&
+            api.length > 10
+        ) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setCurrentStep(3);
+        } else if (email.includes("@")) {
+            setCurrentStep(2);
+        } else {
+            setCurrentStep(1);
+        }
+    }, [formData]);
 
     return (
         <div className="min-h-screen bg-[#F9FAFB] flex flex-col font-sans text-[#475467]">
@@ -177,7 +195,7 @@ export default function SignupPage() {
 
                             <div className="relative">
                                 <input
-                                    id="apiKey"
+                                    id="api"
                                     type={showApiKey ? 'text' : 'password'}
                                     className="w-full px-4 py-3 border border-[#D0D5DD] rounded-lg focus:ring-4 focus:ring-[#FF5A1F]/10 focus:border-[#FF5A1F] outline-none transition-all"
                                     placeholder="sk-..."

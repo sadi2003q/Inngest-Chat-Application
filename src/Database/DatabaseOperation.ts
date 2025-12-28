@@ -1,3 +1,7 @@
+
+// filePath : src/Database/DatabaseOperation.ts
+
+
 import {DatabaseName, type UserInformation} from "../Others/utilities.ts";
 import { doc, setDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase.ts"; // adjust path
@@ -13,11 +17,11 @@ export class DatabaseOperation {
         id: string
     }) => {
         try {
-            console.log(userInformation)
-            console.log("Database that is going to store all information : ", DatabaseName.UserDatabase)
-            console.log("ID that is going to store the information : ", id);
 
-            const ref = doc(db, DatabaseName.UserDatabase, id);
+
+            console.log("ID : ", id);
+
+            const ref = doc(db, "Chat_User", id);
             await setDoc(ref, {
                 ...userInformation,
                 createdAt: new Date(),
@@ -50,3 +54,21 @@ export class DatabaseOperation {
 
 }
 
+// const database = new DatabaseOperation();
+//
+// try {
+//     await database.Save_UserInformation({
+//         id: "23456",
+//         userInformation:{
+//             firstName:"adnan",
+//             lastName: "abdullah",
+//             email:"adnan",
+//             api:"124",
+//             terms :true
+//         }
+//     })
+// } catch (error) {
+//     if(error instanceof Error) {
+//         console.log(error.message);
+//     }
+// }

@@ -11,7 +11,7 @@ export class Authentication_Firestore {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             console.log(userCredential.user.uid);
-            return userCredential.user;
+            return userCredential.user.uid;
         } catch (error) {
             if(error instanceof Error) {
                 console.error("Signup Error:", error.message);
