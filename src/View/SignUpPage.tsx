@@ -75,7 +75,6 @@ export default function SignupPage() {
         }
 
     };
-
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         try {
@@ -88,10 +87,7 @@ export default function SignupPage() {
         }
         catch (error) { if(error instanceof Error) console.log(error.message); }
     };
-
     const strength = controller.getPasswordStrength()
-
-
 
     useEffect(() => {
         const { firstName, lastName, email, api } = formData.info;

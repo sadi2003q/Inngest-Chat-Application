@@ -1,13 +1,14 @@
 import type {All_Messages, User_msg} from "../Others/utilities.ts";
 import React from "react";
 import {DatabaseOperation} from "../Database/DatabaseOperation.ts";
-
+import {Authentication_Firestore} from "../Database/Authentication.ts";
 
 export class DashboardController{
 
     private readonly setMessageHeader: React.Dispatch<React.SetStateAction<User_msg[]>>
 
     private readonly server = new DatabaseOperation();
+    private readonly serverAuth = new Authentication_Firestore();
 
 
     constructor({setMessageHeader}: { setMessageHeader: React.Dispatch<React.SetStateAction<User_msg[]>>
@@ -25,7 +26,6 @@ export class DashboardController{
             }
         }
     }
-
     createNewConversation = async({id, conversation} : {id: string, conversation:All_Messages}) => {
         try {
             return await this.server.createNewConversation({id: id, messageHeader: conversation});
@@ -36,6 +36,18 @@ export class DashboardController{
         }
 
     }
+    SignOut = async () => {
+        try {
+
+            await this.serverAuth.logout();
+
+        } catch (error) {
+            if(error instanceof Error){
+                console.error("Logout Error:", error.message);
+            }
+        }
+    }
+
 
 
 

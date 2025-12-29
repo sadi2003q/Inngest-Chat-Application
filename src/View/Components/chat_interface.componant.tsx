@@ -1,27 +1,37 @@
 //FilePath: src/chat_interface.component.tsx
 
 
-import { MessageCircle, Send, Settings, Trash2 } from "lucide-react"
+import {ArrowLeft, MessageCircle, Send, Settings, Trash2 } from "lucide-react"
 import React, { useRef, useEffect, useState } from "react";
 import {TAG_COLORS} from "../../Others/utilities.ts";
 import type {AIResponse, Message} from "../../Model/model.aiResponse.ts";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {oneLight} from "react-syntax-highlighter/dist/cjs/styles/prism";
+import {useNavigate} from "react-router-dom";
 
 
 
 // Header Component
 export const ChatHeader = ({ name, subtext }: { name: string; subtext: string }) => {
+    const navigate = useNavigate();
     return (
         <div className="w-full max-w-4xl mx-auto bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
             <div className="flex flex-col">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="p-2 rounded-lg hover:bg-gray-100 transition"
+                    aria-label="Go back"
+                >
+                    <ArrowLeft className="w-5 h-5 text-gray-700"/>
+                </button>
+
                 <h1 className="text-xl font-semibold text-gray-900">{name}</h1>
                 <p className="text-sm text-gray-500">{subtext}</p>
             </div>
 
             <div className="flex items-center gap-2">
-                <IconButton icon={<MessageCircle className="w-5 h-5" />} label="New Chat" />
-                <IconButton icon={<Settings className="w-5 h-5" />} label="Settings" />
+                <IconButton icon={<MessageCircle className="w-5 h-5"/>} label="New Chat"/>
+                <IconButton icon={<Settings className="w-5 h-5"/>} label="Settings"/>
                 <IconButton icon={<Trash2 className="w-5 h-5" />} label="Clear" variant="danger" />
             </div>
         </div>

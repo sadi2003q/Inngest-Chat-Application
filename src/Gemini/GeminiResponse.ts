@@ -1,11 +1,8 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generativeai";
 import type {AIResponse} from "../Model/model.aiResponse.ts";
-import {GEMINI_secret} from "../secret.ts";
 import {SYSTEM_PROMPT, SUMMARY_PROMPT, CONVERSATION_NAME_PROMPT} from "../Others/utilities.ts";
 
-const ai = new GoogleGenAI({
-    apiKey: GEMINI_secret
-});
+const ai = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 
 

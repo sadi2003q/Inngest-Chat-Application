@@ -35,8 +35,6 @@ export default function LoginPage() {
         setStatus: setStatus,
     });
 
-
-
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { id, value, type, checked } = e.target;
         setFormData((prev) => ({
@@ -59,11 +57,10 @@ export default function LoginPage() {
 
     };
 
-
-
     return (
         <div className="min-h-screen bg-[#F9FAFB] flex flex-col font-sans text-[#475467]">
-            {/* Header */}
+
+             {/* Header */}
             <NavigationBar/>
 
             {/* Main Content */}

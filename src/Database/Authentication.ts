@@ -41,7 +41,6 @@ export class Authentication_Firestore {
         }
     };
 
-
     // Logout function
     logout = async () => {
          try {

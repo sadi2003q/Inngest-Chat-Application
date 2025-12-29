@@ -15,7 +15,6 @@ export default function MessagesDashboard () {
 
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
-    // const [selectedMessages, setSelectedMessages] = useState<number[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [messageHeader, setMessageHeader] = useState<User_msg[]>(messages);
 
@@ -38,7 +37,7 @@ export default function MessagesDashboard () {
         return matchesSearch && matchesFilter;
     });
 
-    // This is the function responsible for taking the user to the specific conversation List
+    // Message List Button Actions...
     const handleSelectMessage = (id: number) => {
         // setSelectedMessages(prev =>
         //     prev.includes(id)
@@ -50,8 +49,6 @@ export default function MessagesDashboard () {
     const handleOnArchive = (id: number) => { console.log("Clicked : ", id); }
     const handleOnDelete = (id: number) => { console.log("Clicked : ", id); }
     const handleOnMore = () => { console.log("Clicked : "); }
-
-
 
     const handleNewMessage = async () => {
         if (!uid) return;
@@ -72,7 +69,6 @@ export default function MessagesDashboard () {
 
         if( cid ) navigate(`${Pages.ChatInterface}?cid=${cid}`);
     };
-
     const handlePageClick = (page: number) => {
         setCurrentPage(page);
         console.log("Go to Page:", currentPage);
@@ -82,9 +78,10 @@ export default function MessagesDashboard () {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     const changeFilter = (e) => setFilterStatus(e.target.value)
-    const SignOut_Function = () => console.log("SignOutFunction()")
-
-
+    const SignOut_Function = async() => {
+        await controller.SignOut();
+        navigate(Pages.Login);
+    }
 
     const hasFetched = useRef(false);
 
@@ -94,8 +91,6 @@ export default function MessagesDashboard () {
         const load = async () => { await controller.fetchAllMessageList({ id: uid }) };
         load().then();
     }, [controller, uid]);
-
-
 
     return (
         <div className="min-h-screen bg-[#F9FAFB]">
@@ -137,10 +132,9 @@ export default function MessagesDashboard () {
 
                         filteredMessages.map((message) => (
                             <div
-                                key={message.id}
+                                key={message.uid}
                                 className="bg-white rounded-lg border border-[#D0D5DD] hover:border-[#FF5A1F] transition-all hover:shadow-md cursor-pointer group"
                             >
-
 
                                 <div className="p-6">
                                     <div className="flex items-start justify-between gap-4">
@@ -155,7 +149,6 @@ export default function MessagesDashboard () {
                                             onArchive={handleOnArchive}
                                             onDelete={handleOnDelete}
                                             onMore={handleOnMore}
-
                                         />
                                     </div>
                                 </div>
