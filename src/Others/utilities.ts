@@ -2,7 +2,9 @@
 
 import type {AIResponse} from "../Model/model.aiResponse.ts";
 
-
+/**
+ * Tag Color
+ */
 export const TAG_COLORS = [
     "bg-blue-500/20 text-blue-400 border-blue-400/30",
     "bg-green-500/20 text-green-400 border-green-400/30",
@@ -12,7 +14,9 @@ export const TAG_COLORS = [
     "bg-cyan-500/20 text-cyan-400 border-cyan-400/30",
 ];
 
-
+/**
+ * Demo Response to Test the UI
+ */
 export const demoResponse: AIResponse = {
     heading: "The Observer Design Pattern: A Comprehensive Guide",
     introduction: "The Observer Pattern is a behavioral design pattern that defines a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically. It is a cornerstone of event-driven programming and is the engine behind MVC (Model-View-Controller) architectures where the view stays synchronized with the model.",
@@ -129,6 +133,9 @@ class NewsChannel implements Observer {
     footer: "Reference: Behavioral Design Patterns Library | v2.4.0 | © 2025"
 };
 
+/**
+ * Prompt For Generating Summary
+ */
 export const SUMMARY_PROMPT = `
 You are maintaining a short memory of a conversation.
 
@@ -150,6 +157,9 @@ AI: {{answer}}
 Return ONLY the updated summary text.
 `;
 
+/**
+ * Default Prompt for generating Summary
+ */
 export const SYSTEM_PROMPT = `
 You are an AI content generator.
 
@@ -219,6 +229,9 @@ Rules:
 - code field must be raw code as a string (no markdown)
 `;
 
+/**
+ * Prompt For Making Conversation Name
+ */
 export const CONVERSATION_NAME_PROMPT = `
     Please read this Conversation Summary and return me a Suitable name:
     summary : _CONVERSATION_SUMMARY_
@@ -232,6 +245,10 @@ export const CONVERSATION_NAME_PROMPT = `
     
 `
 
+
+/**
+ * Demo List of Messages for test
+ */
 export const messages: User_msg[] = [
     {
         uid: 1,
@@ -316,106 +333,233 @@ export const messages: User_msg[] = [
 ];
 
 
-
+/**
+ * Interface for Login form data
+ * Used when a user attempts to log in.
+ */
 export interface loginInterface {
+    /** User email address */
     email: string;
+
+    /** User password */
     password: string;
+
+    /** Whether the user wants to be remembered */
     remember: boolean;
 }
 
-
+/**
+ * Wait for a certain amount of time (in milliseconds).
+ * Useful for artificial delays (e.g., loaders, transitions).
+ *
+ * @param time - Time to wait in milliseconds
+ * @returns Promise that resolves after the given time
+ */
 export const wait = ({ time }: { time: number }) => {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-
+/**
+ * Represents the status of a login attempt.
+ */
 export interface LoginStatus {
+    /** Status type of the login attempt */
     type: "success" | "error" | null;
+
+    /** Message describing the status */
     message: string;
 }
 
+/**
+ * Represents the status of a signup attempt.
+ */
 export interface SignupStatus {
+    /** Status type of the signup attempt */
     type: 'success' | 'error' | null;
+
+    /** Message describing the status */
     message: string;
 }
 
+/**
+ * Props for empty list UI components
+ * Used when no data is available.
+ */
 export type EmptyListProps = {
+    /** Callback to create a new item */
     makeNewFunction: () => void;
 };
 
+/**
+ * Interface for outer message box / conversation preview
+ * Used in dashboard message list.
+ */
 export interface User_msg {
+    /** Unique conversation ID */
     uid: number;
+
+    /** Conversation title */
     title: string;
+
+    /** Last message text */
     lastMessage: string;
+
+    /** Timestamp of last message */
     timestamp: string;
+
+    /** Current status of the conversation */
     status: string;
+
+    /** Number of unread messages */
     messageCount: number;
 }
 
+/**
+ * Props for message action buttons
+ * (archive, delete, more, etc.)
+ */
 export type MessageActionsProps = {
+    /** Message ID */
     messageId: number;
+
+    /** Generic action handler */
     onAction: (id: number) => void;
+
+    /** Archive action handler */
     onArchive:(id: number) => void;
+
+    /** Delete action handler */
     onDelete: (id: number) => void;
+
+    /** Open more options */
     onMore:() => void;
 };
 
-
+/**
+ * Props for pagination component
+ */
 export interface PaginationProps {
+    /** Current active page */
     currentPage: number;
+
+    /** Total number of pages */
     totalPages: number;
+
+    /** Number of filtered items */
     filteredCount: number;
+
+    /** Total number of items */
     totalCount: number;
+
+    /** Navigate to previous page */
     onPrevious: () => void;
+
+    /** Navigate to next page */
     onNext: () => void;
+
+    /** Navigate to a specific page */
     onPageClick: (page: number) => void;
 }
 
-
+/**
+ * Props for filter component
+ */
 export interface FilterProps {
+    /** Current filter value */
     filterStatus: string;
+
+    /** Callback when filter changes */
     onFilterChange: (value: string) => void;
+
+    /** Optional callback to create a new message */
     onNewMessage?: () => void;
 }
 
+/**
+ * Props for search bar component
+ */
 export interface SearchBarProps {
+    /** Current search query */
     searchQuery: string;
+
+    /** Callback when search query changes */
     onSearchChange: (value: string) => void;
 }
 
-
+/**
+ * User profile information
+ */
 export interface UserInformation {
-    firstName: string
-    lastName: string
-    email: string
-    api: string
-    terms: boolean
+    /** User first name */
+    firstName: string;
 
+    /** User last name */
+    lastName: string;
+
+    /** User email */
+    email: string;
+
+    /** User API key */
+    api: string;
+
+    /** Whether user accepted terms and conditions */
+    terms: boolean;
 }
 
-
+/**
+ * Signup user information with password
+ */
 export interface user_info {
-    info: UserInformation
-    password: string
+    /** User personal information */
+    info: UserInformation;
+
+    /** User password */
+    password: string;
 }
 
+/**
+ * Interface for conversation metadata stored in database
+ */
 export interface All_Messages {
-    createdAt: Date,
-    Summary: string,
-    title: string,
-    isArchived: boolean,
-    lastMessage_time: Date,
-    lastMessage: string
+    /** Creation date of the conversation */
+    createdAt: Date;
 
+    /** Short summary of the conversation */
+    Summary: string;
+
+    /** Conversation title */
+    title: string;
+
+    /** Archive status */
+    isArchived: boolean;
+
+    /** Time of the last message */
+    lastMessage_time: Date;
+
+    /** Last message text */
+    lastMessage: string;
 }
 
+/**
+ * Interface for individual chat messages
+ */
 export interface ConversationMessage {
+    /** Message content (user or AI) */
     text: string | AIResponse;
+
+    /** Unique message ID */
     id: number;
+
+    /** Message timestamp */
     time: Date;
+
+    /** Whether the message was sent by the user */
     isUser: boolean;
 }
 
+/**
+ * Application route paths
+ */
 export const Pages = {
     Signup: "/signup",
     Login: "/login",
@@ -423,14 +567,16 @@ export const Pages = {
     ChatInterface: "/chat"
 } as const;
 
-
-
+/**
+ * Firestore database collection names
+ */
 export const DatabaseName = {
+    /** Root user database */
     UserDatabase: "Chat_User",
+
+    /** List of all conversations */
     AllChats_list: "All_Messages_List",
+
+    /** Messages inside a conversation */
     AllChats: "All_Messages"
-
-
 } as const;
-
-

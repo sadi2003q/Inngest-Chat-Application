@@ -16,6 +16,10 @@ export class DashboardController{
         this.setMessageHeader = setMessageHeader;
     }
 
+    /**
+     * Fetch all Message List from Firestore
+     * @param id : string User ID
+     */
     fetchAllMessageList = async ({id}: {id: string}) => {
         try {
             const response = await this.server.getAllConversationList({id});
@@ -26,6 +30,11 @@ export class DashboardController{
             }
         }
     }
+    /**
+     * Create new Conversation On the Database
+     * @param id : string User ID
+     * @param conversation : All_Messages Starter Conversation kit
+     */
     createNewConversation = async({id, conversation} : {id: string, conversation:All_Messages}) => {
         try {
             return await this.server.createNewConversation({id: id, messageHeader: conversation});
@@ -36,6 +45,10 @@ export class DashboardController{
         }
 
     }
+    /**
+     * Sign out from Database
+     * @constructor
+     */
     SignOut = async () => {
         try {
 

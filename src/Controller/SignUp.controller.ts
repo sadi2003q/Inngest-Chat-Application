@@ -23,6 +23,10 @@ export class SignUpController {
         this.setStatus = setStatus;
     }
 
+    /**
+     * Signup into Firestore and Save Information to Firestore
+     * @constructor
+     */
     SignUp = async() => {
         try {
             const uid = await this.createUser();
@@ -37,8 +41,9 @@ export class SignUpController {
             }
         }
     }
-
-
+    /**
+     * Create new User on the Database
+     */
     createUser = async() => {
 
         if(!this.userInfo.info.terms) {
@@ -62,8 +67,11 @@ export class SignUpController {
             }
         }
     }
-
-
+    /**
+     * Save Information into Firestore
+     * @param id
+     * @constructor
+     */
     SaveInformation_toDatabase = async({id}: {id: string}) => {
         try {
             console.log("Function Called id : ", id);
@@ -78,7 +86,9 @@ export class SignUpController {
             }
         }
     }
-
+    /**
+     * Show Password Strength
+     */
     getPasswordStrength = () => {
         const pwd = this.userInfo.password;
         let strength = 0;

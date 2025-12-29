@@ -18,6 +18,13 @@ export class DatabaseOperation {
 
 
     // ***  User Information Related Query  ***
+
+    /**
+     * Save Current user information into the Database while Signing up
+     * @param userInformation : UserInformation User Information from signup Page
+     * @param id : string user ID
+     * @constructor
+     */
     Save_UserInformation = async ({userInformation, id} : {
         userInformation: UserInformation,
         id: string
@@ -39,7 +46,10 @@ export class DatabaseOperation {
             throw new Error(message);
         }
     }
-
+    /**
+     * Delete Any user from Database.Not Implemented
+     * @param id : string User ID
+     */
     DeleteUser_fromFirestore = async({id}: {id: string}) => {
         try {
             const ref = doc(db, DatabaseName.UserDatabase, id);
@@ -53,7 +63,10 @@ export class DatabaseOperation {
             throw new Error(message);
         }
     }
-
+    /**
+     * Fetch User Information From Firestore (not Implemented)
+     * @param id : string user ID
+     */
     getUserInformation = async ({id}: {id: string}) => {
         try {
             const ref = doc(db, DatabaseName.UserDatabase, id);
@@ -75,6 +88,12 @@ export class DatabaseOperation {
 
 
     // ***  All conversation Related Query  ***
+
+    /**
+     * Create new Conversation Outer box which contain Summary Last Message time and so on
+     * @param id : string user ID
+     * @param messageHeader : All_Messages Starter Message kit
+     */
     createNewConversation = async ({id, messageHeader}: {id: string, messageHeader: All_Messages}) => {
         try {
 
@@ -92,7 +111,10 @@ export class DatabaseOperation {
             throw new Error(message);
         }
     }
-
+    /**
+     * get All Conversation List from firestore
+     * @param id : string user id
+     */
     getAllConversationList = async ({id}: {id: string}) => {
         try {
             const ref = collection(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list);
@@ -107,7 +129,12 @@ export class DatabaseOperation {
             throw new Error(message);
         }
     }
-
+    /**
+     * Add new Message to a specific conversation as string
+     * @param uid : string (User ID)
+     * @param cID : string (Conversation ID)
+     * @param message : ConversationMessage (the message that is going to be saved)
+     */
     addMessage = async ({uid, cID, message}: {uid: string, cID: string, message: ConversationMessage}) => {
         try {
 
@@ -123,7 +150,11 @@ export class DatabaseOperation {
             throw new Error(message);
         }
     }
-
+    /**
+     * Fetch all message of a conversation
+     * @param id : string user id
+     * @param cID : string conversation id
+     */
     getAllConversationMessage = async ({id, cID}: {id: string, cID: string}) => {
         try {
             const ref = collection(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list, cID, DatabaseName.AllChats);
@@ -170,7 +201,12 @@ export class DatabaseOperation {
             throw new Error(message);
         }
     }
-
+    /**
+     * Update Summary (For Context) of the Conversation
+     * @param id : string user ID
+     * @param cID : string conversation ID
+     * @param summary : string current summary
+     */
     updateSummary = async ({id, cID, summary}: {id: string, cID: string, summary: string}) => {
         try {
             const ref = doc(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list, cID)
@@ -186,7 +222,13 @@ export class DatabaseOperation {
             throw new Error(message);
         }
     }
-
+    /**
+     * Update the Last Message time and Last message to the Outer Box of conversation
+     * @param id : string user ID
+     * @param cID : string Conversation ID
+     * @param lastMessage : string Actual Last Message
+     * @param lastMessage_time : Date time of last message
+     */
     updateMessageList = async ({id, cID, lastMessage, lastMessage_time}: {id: string, cID: string, lastMessage: string, lastMessage_time: Date}) => {
         try {
             const ref = doc(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list, cID)
@@ -203,7 +245,12 @@ export class DatabaseOperation {
             throw new Error(message);
         }
     }
-
+    /**
+     * Change the name of the conversation
+     * @param id : string user iD
+     * @param cID : string conversation ID
+     * @param name : string current name
+     */
     updateName = async ({id, cID, name}: {id: string, cID: string, name: string}) => {
         try {
             const ref = doc(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list, cID)

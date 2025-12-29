@@ -6,7 +6,12 @@ const auth = getAuth(app);
 
 
 export class Authentication_Firestore {
-    // Signup function
+
+    /**
+     * Sign Up with email and Password
+     * @param email : string email of the User
+     * @param password : string password of the user
+     */
     signupWithEmail = async ({email, password}: {email: string, password: string}) => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -19,7 +24,6 @@ export class Authentication_Firestore {
 
         }
     };
-
     /**
      * Login With Email and Password
      * @param email : string - Normal Valid Email
@@ -40,8 +44,9 @@ export class Authentication_Firestore {
 
         }
     };
-
-    // Logout function
+    /**
+     * Logout from the App
+     */
     logout = async () => {
          try {
              await signOut(auth);

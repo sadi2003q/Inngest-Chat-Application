@@ -16,7 +16,7 @@ export const ChatHeader = ({ name, subtext }: { name: string; subtext: string })
     const navigate = useNavigate();
     return (
         <div className="w-full max-w-4xl mx-auto bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-            <div className="flex flex-col">
+            <div className="flex items-start">
                 <button
                     onClick={() => navigate(-1)}
                     className="p-2 rounded-lg hover:bg-gray-100 transition"
@@ -25,21 +25,23 @@ export const ChatHeader = ({ name, subtext }: { name: string; subtext: string })
                     <ArrowLeft className="w-5 h-5 text-gray-700"/>
                 </button>
 
-                <h1 className="text-xl font-semibold text-gray-900">{name}</h1>
-                <p className="text-sm text-gray-500">{subtext}</p>
+                <div className="flex flex-col">
+                    <h1 className="text-xl font-semibold text-gray-900">{name}</h1>
+                    <p className="text-sm text-gray-500">{subtext}</p>
+                </div>
             </div>
 
             <div className="flex items-center gap-2">
                 <IconButton icon={<MessageCircle className="w-5 h-5"/>} label="New Chat"/>
                 <IconButton icon={<Settings className="w-5 h-5"/>} label="Settings"/>
-                <IconButton icon={<Trash2 className="w-5 h-5" />} label="Clear" variant="danger" />
+                <IconButton icon={<Trash2 className="w-5 h-5"/>} label="Clear" variant="danger"/>
             </div>
         </div>
     );
 };
 
 // Icon Button Component
-const IconButton = ({ icon, label, variant = "default" }: { icon: React.ReactNode; label: string; variant?: "default" | "danger" }) => {
+const IconButton = ({icon, label, variant = "default" }: { icon: React.ReactNode; label: string; variant?: "default" | "danger" }) => {
     const baseClasses = "p-2 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95";
     const variantClasses = variant === "danger"
         ? "text-rose-600 hover:bg-rose-50"

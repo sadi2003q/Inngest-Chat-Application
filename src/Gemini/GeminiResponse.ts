@@ -1,16 +1,20 @@
-import { GoogleGenerativeAI } from "@google/generativeai";
+import { GoogleGenAI } from "@google/genai";
 import type {AIResponse} from "../Model/model.aiResponse.ts";
+import {GEMINI_secret} from "../secret.ts";
 import {SYSTEM_PROMPT, SUMMARY_PROMPT, CONVERSATION_NAME_PROMPT} from "../Others/utilities.ts";
 
-const ai = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+const ai = new GoogleGenAI({
+    apiKey: GEMINI_secret
+});
 
 
-
-
-
+/**
+ * Generate Response for Question With Gemini
+ * @param question : string User Question
+ */
 export const aiResponse = async ({
-     question,
- }: {
+ question,
+}: {
     question: string;
 }): Promise<AIResponse> => {
     try {
@@ -40,7 +44,10 @@ export const aiResponse = async ({
     }
 };
 
-
+/**
+ * Format AI response
+ * @param text : string AI Generated answer
+ */
 const cleanJunkFromText = ({text} : {text: string}) => {
     const cleanedText = text
         .replace(/^\s*```(?:json)?\s*/, '') // remove opening ``` or ```json
@@ -50,6 +57,11 @@ const cleanJunkFromText = ({text} : {text: string}) => {
 }
 
 
+/**
+ * Generate Streaming Response from Gemini
+ * @param question : User Question
+ * @param onChunk
+ */
 export const aiResponseStream = async (
     { question }: { question: string },
     onChunk: (partialText: string) => void
@@ -76,12 +88,16 @@ export const aiResponseStream = async (
 }
 
 
-
-
+/**
+ * Generate Summary of the Conversation
+ * @param conversationSummary : string Current Summary
+ * @param question : string Last Question of User
+ * @param finalText : string Last Response of Gemini
+ */
 export const generateSummary = async ({
-    conversationSummary,
-    question,
-    finalText
+  conversationSummary,
+  question,
+  finalText
 } : {
     conversationSummary: string;
     question: string;
@@ -117,9 +133,12 @@ export const generateSummary = async ({
 }
 
 
-
-export const ConversationName = async({conversationSummary}
-: {conversationSummary: string}) => {
+/**
+ * Generate Conversation Name
+ * @param conversationSummary : string Current Name of Conversation
+ * @constructor
+ */
+export const ConversationName = async({conversationSummary}: {conversationSummary: string}) => {
 
     try {
         const response = await ai.models.generateContent({

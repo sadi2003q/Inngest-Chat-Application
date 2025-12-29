@@ -5,13 +5,13 @@ import { getStorage } from "firebase/storage";
 
 // Firebase config
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyD7nvlntDjrZbAKZ3GD7xNBTHg4TZ319HY",
+  authDomain: "chatnow-bd883.firebaseapp.com",
+  projectId: "chatnow-bd883",
+  storageBucket: "chatnow-bd883.firebasestorage.app",
+  messagingSenderId: "418617724834",
+  appId: "1:418617724834:web:acafc5da43e78377322cfb",
+  measurementId: "G-76PRL5X393"
 };
 
 // Initialize Firebase

@@ -19,8 +19,9 @@ export class LoginController {
     }
 
 
-
-
+    /**
+     * Login using Email and Password
+     */
     login = async () => {
         if (!this.loginInterface.email && this.loginInterface.password.length < 6) {
             this.setStatus({ type: 'error', message: 'Invalid email or password. Please try again.' });

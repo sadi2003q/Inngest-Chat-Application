@@ -45,7 +45,16 @@ export class ChatController {
         this.setErrorMessage = setErrorMessage;
     }
 
+
+
     // --- Generate Answer from Gemini ---
+
+    /**
+     * Generate Demo Response for testing also Save to the user as well as update the summary
+     * @param question : string Question From the User
+     * @param id : string User ID
+     * @param cid : string Conversation ID
+     */
     getAnswer = async ({ question, id, cid }: { question: string, id: string, cid: string }) => {
         if (!question.trim()) return { success: false, error: "Empty question" };
 
@@ -119,6 +128,12 @@ export class ChatController {
 
         return { success: false };
     };
+    /**
+     * Generate Streaming Response from Gemini
+     * @param question : string user Query
+     * @param id : string user ID
+     * @param cid : string Conversation ID
+     */
     getAnswerStream = async ({ question, id, cid }: { question: string, id: string, cid: string}) => {
 
         if(!question.trim()) return { success: false, error: {message: "Empty question"} };
@@ -210,6 +225,9 @@ export class ChatController {
 
 
     }
+    /**
+     * Make Name of the Conversation with Gemini
+     */
     makeConversationName = async () => {
         try {
 
@@ -232,6 +250,12 @@ export class ChatController {
 
 
     // --- Database Operation ---
+
+    /**
+     * Fetch all Conversation Message
+     * @param id : string user ID
+     * @param cid : string Conversation ID
+     */
     getAllConversation_text = async ({id, cid}: {id: string, cid: string}) => {
         try {
             const response = await this.server.getAllConversationMessage({
@@ -245,6 +269,14 @@ export class ChatController {
         }
 
     }
+    /**
+     * Add Message to Database
+     * @param id : string user ID
+     * @param cid : string Conversation ID
+     * @param message : string AIResponse Main conversation
+     * @param count : number nth Number of Message
+     * @param isUser : boolean is the Message from user
+     */
     addToDatabase = async ({id, cid, message, count, isUser}: {
         id: string,
         cid: string,
@@ -269,6 +301,11 @@ export class ChatController {
             console.log("Saved to Database")
         } catch (error) { if(error instanceof Error)  this.handleError(error); }
     }
+    /**
+     * Change the name of the Conversation
+     * @param id : string User ID
+     * @param cid : string Conversation ID
+     */
     updateConversationName = async({id, cid}: {id: string, cid: string}) => {
         try {
             if (
@@ -286,6 +323,13 @@ export class ChatController {
             }
         }
     }
+    /**
+     * Update Conversation Summary
+     * @param id : string user ID
+     * @param cid : string Conversation ID
+     * @param question : string last user Question
+     * @param finalResponse : unknown last AI response
+     */
     updateConversationSummary = async({id, cid, question, finalResponse}: {id: string, cid: string, question: string, finalResponse: unknown}) => {
         try {
             const summary = await generateSummary({
@@ -306,6 +350,12 @@ export class ChatController {
             }
         }
     }
+    /**
+     * Update Conversation Information
+     * @param id : string User ID
+     * @param cid : string Conversation ID
+     * @param lastMessage : string Last Conversation Message
+     */
     updateConversationInformation = async({id, cid, lastMessage}: {id: string, cid: string, lastMessage: unknown}) => {
         try {
             await this.server.updateMessageList({
@@ -322,9 +372,10 @@ export class ChatController {
 
 
     // --- Helper Function ---
-    wait = (ms: number) => {
-        new Promise((resolve) => setTimeout(resolve, ms)).then();
-    }
+    /**
+     * Helps to Build the prompt with a previous message's Context
+     * @param question : string Current Question
+     */
     buildContextPrompt = (question: string) => {
         const recentMessages = this.messages()
             .filter(m => m.type === "user" || m.type === "ai-text")
@@ -345,6 +396,10 @@ Current Question:
 ${question}
 `;
     }
+    /**
+     * Make Viewable error Message
+     * @param error : Error error of a function
+     */
     handleError = (error: Error) => {
         let errorText = "Something went wrong";
 
@@ -358,6 +413,10 @@ ${question}
             return [...newMessages]; // optionally add the error message
         });
     }
+    /**
+     * Return a Message that could be sent as Summary
+     * @param text : string Summary Text
+     */
     formatLastMessage = (text: string): string => {
         const sanitized = text.replace(/"/g, "");
         if (sanitized.length <= 65) return sanitized;
