@@ -12,8 +12,8 @@ const ai = new GoogleGenAI({
 
 
 export const aiResponse = async ({
-                                     question,
-                                 }: {
+     question,
+ }: {
     question: string;
 }): Promise<AIResponse> => {
     try {

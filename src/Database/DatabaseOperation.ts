@@ -81,7 +81,10 @@ export class DatabaseOperation {
         try {
 
             const ref = collection(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list);
-            await addDoc(ref, messageHeader);
+            const docID = await addDoc(ref, messageHeader);
+            console.log("ID : ", docID.id);
+            return docID.id;
+
         } catch (error) {
             let message = "Error Saving Information into Firestore";
             if(error instanceof Error) {

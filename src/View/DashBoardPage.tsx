@@ -5,9 +5,10 @@ import {
     DashboardPage_Heading, DashboardPage_MessageList, MessageActions, MessageFilter,
     Pagination, SearchBar
 } from "./Components/DashboardPage.component.tsx";
-import {messages, type User_msg} from "../Others/utilities.ts";
+import {type All_Messages, messages, Pages, type User_msg} from "../Others/utilities.ts";
 import {DashboardController} from "../Controller/Dashboard.controller.ts";
 import {useAuth} from "../AuthContext.tsx";
+import {useNavigate} from "react-router-dom";
 
 
 export default function MessagesDashboard () {
@@ -20,6 +21,10 @@ export default function MessagesDashboard () {
 
     // Global Context
     const { uid } = useAuth();
+
+    // Routing Variable
+    const navigate = useNavigate();
+
 
 
     // Controller Class
@@ -37,6 +42,7 @@ export default function MessagesDashboard () {
         return matchesSearch && matchesFilter;
     });
     const handleSelectMessage = (id: number) => {
+        console.log("Clicked");
         setSelectedMessages(prev =>
             prev.includes(id)
                 ? prev.filter(msgId => msgId !== id)
@@ -47,9 +53,24 @@ export default function MessagesDashboard () {
         console.log(selectedMessages);
     };
 
-    const handleNewMessage = () => {
-        // navigate to Chat page or create a new message entry
-        console.log("Creating a new message...");
+    const handleNewMessage = async () => {
+        if (!uid) return;
+
+        const newConversation: All_Messages = {
+            createdAt: new Date(),
+            Summary: "",
+            title: "New Conversation",
+            isArchived: false,
+            lastMessage_time: new Date(),
+            lastMessage: ""
+        };
+
+        const cid = await controller.createNewConversation({
+            id: uid,
+            conversation: newConversation,
+        });
+
+        if( cid ) navigate(`${Pages.ChatInterface}?cid=${cid}`);
     };
 
     const handlePageClick = (page: number) => {

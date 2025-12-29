@@ -1,3 +1,4 @@
+
 import {Clock, MessageSquare, Plus, Search} from "lucide-react";
 import type {EmptyListProps, FilterProps, MessageActionsProps, SearchBarProps, User_msg} from "../../Others/utilities.ts";
 import { Archive, Trash2, MoreVertical } from "lucide-react";
@@ -5,9 +6,12 @@ import type {PaginationProps} from "../../Others/utilities.ts";
 import { Link } from 'react-router-dom'
 
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-export const Dashboard_NavigationBar = (SignOutFunction) => {
+
+export const Dashboard_NavigationBar = ({
+                                            SignOutFunction,
+                                        }: {
+    SignOutFunction: () => void;
+}) => {
     return (
         <header className="bg-white border-b border-[#F9FAFB] sticky top-0 z-50">
             <div className="max-w-[1400px] mx-auto px-6 py-5">

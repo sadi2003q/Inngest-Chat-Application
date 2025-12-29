@@ -1,4 +1,4 @@
-import type {User_msg} from "../Others/utilities.ts";
+import type {All_Messages, User_msg} from "../Others/utilities.ts";
 import React from "react";
 import {DatabaseOperation} from "../Database/DatabaseOperation.ts";
 
@@ -29,6 +29,19 @@ export class DashboardController{
             }
         }
     }
+
+    createNewConversation = async({id, conversation} : {id: string, conversation:All_Messages}) => {
+        try {
+            return await this.server.createNewConversation({id: id, messageHeader: conversation});
+        } catch (error) {
+            if(error instanceof Error){
+                console.log(error.message);
+            }
+        }
+
+    }
+
+
 
 
 }

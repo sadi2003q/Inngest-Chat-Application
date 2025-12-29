@@ -10,7 +10,6 @@ export class Authentication_Firestore {
     signupWithEmail = async ({email, password}: {email: string, password: string}) => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            console.log(userCredential.user.uid);
             return userCredential.user.uid;
         } catch (error) {
             if(error instanceof Error) {
@@ -21,7 +20,12 @@ export class Authentication_Firestore {
         }
     };
 
-    // Login function
+    /**
+     * Login With Email and Password
+     * @param email : string - Normal Valid Email
+     * @param password : string - Valid password
+     * @return void
+     */
     loginWithEmail = async ({ email, password }: { email: string; password: string }) => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);

@@ -10,6 +10,9 @@ import {
 } from "./Components/chat_interface.componant.tsx";
 import type { Message } from "../Model/model.aiResponse.ts";
 import {ChatController} from "../Controller/ChatInterface.controller.ts";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import { Pages } from "../Others/utilities.ts";
+import {useAuth} from "../AuthContext.tsx";
 
 
 
@@ -19,7 +22,7 @@ import {ChatController} from "../Controller/ChatInterface.controller.ts";
 // ---------------- COMPONENT ----------------
 export default function ChatInterface() {
 
-    const [textFieldMessage, setTextFieldMessage] = useState(" what is Starvation" ); // Text Field Messaes
+    const [textFieldMessage, setTextFieldMessage] = useState(" what is Starvation" ); // Text Field Messages
     const [messages, setMessages] = useState<Message[]>([]); // All Message Array
     const [isLoading, setIsLoading] = useState<boolean>(false); // for Animation
     const [conversationSummary, setConversationSummary] = useState<string>(""); // for current conversation Summary
@@ -27,11 +30,7 @@ export default function ChatInterface() {
     const [errorMessage, setErrorMessage] = useState<null | string>(null); // handling error
 
 
-
-
-
-
-
+    // Controller Function
     const controller = new ChatController({
         setMessages: setMessages,
         setIsLoading: setIsLoading,
@@ -41,6 +40,15 @@ export default function ChatInterface() {
         setConversationHeading: setConversationHeading,
         setErrorMessage: setErrorMessage
     });
+
+
+    // Navigation Variable
+    const navigate = useNavigate();
+
+    const [searchParams] = useSearchParams();
+    const cid = searchParams.get("cid"); // string | null
+    const { uid } = useAuth();
+
 
 
     useEffect(() => {
@@ -58,12 +66,8 @@ export default function ChatInterface() {
 
         // Stream AI structured response
         // await controller.getAnswerStream({question: textFieldMessage})
-
         // Simulate AI response
-        await controller.getAnswer({question: textFieldMessage});
-
-
-
+        if(cid && uid) await controller.getAnswer({question: textFieldMessage, id: uid, cid: cid});
     }
 
 
@@ -75,9 +79,13 @@ export default function ChatInterface() {
         if (hasFetched.current) return;
         hasFetched.current = true;
 
+        if(!cid) navigate(Pages.Dashboard)
+
+        console.log("CID : ", cid);
+
         controller.getAllConversation_text({
             id: "LFDQSylp5wUog1kt7tEOG4xTAxx2",
-            cid: "1234",
+            cid: cid ?? "1234",
         }).then();
     }, []);
 

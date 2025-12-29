@@ -46,7 +46,7 @@ export class ChatController {
     }
 
     // --- Generate Answer from Gemini ---
-    getAnswer = async ({ question }: { question: string }) => {
+    getAnswer = async ({ question, id, cid }: { question: string, id: string, cid: string }) => {
         if (!question.trim()) return { success: false, error: "Empty question" };
 
         try {
@@ -69,10 +69,10 @@ export class ChatController {
             // this.wait(2000) // Simulate Ai response waiting time.
 
             await this.addToDatabase({
-                id: "LFDQSylp5wUog1kt7tEOG4xTAxx2",
-                cid:  "1234",
+                id: id,
+                cid:  cid,
                 message: question,
-                count: 0,
+                count: this.messages().length,
                 isUser: true
             })
 
@@ -92,10 +92,10 @@ export class ChatController {
             //     isUser: false
             // })
             await this.addToDatabase({
-                id: "LFDQSylp5wUog1kt7tEOG4xTAxx2",
-                cid:  "1234",
+                id: id,
+                cid:  cid,
                 message: JSON.stringify(response) ,
-                count: 0,
+                count: this.messages().length+1,
                 isUser: false
             })
 
@@ -157,7 +157,11 @@ export class ChatController {
             )
 
 
-            if(this.messages().length > 5) await this.makeConversationName();
+            if (
+                this.messages().length == 5
+                || this.messages().length==20
+                || this.messages().length==50
+            )  await this.makeConversationName();
 
 
             // generate Summary
