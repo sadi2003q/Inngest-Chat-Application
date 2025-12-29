@@ -355,6 +355,9 @@ export interface User_msg {
 export type MessageActionsProps = {
     messageId: number;
     onAction: (id: number) => void;
+    onArchive:(id: number) => void;
+    onDelete: (id: number) => void;
+    onMore:() => void;
 };
 
 

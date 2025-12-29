@@ -97,8 +97,6 @@ export class DatabaseOperation {
         try {
             const ref = collection(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list);
             const response = await getDocs(ref);
-
-            // Map through documents and include the UID as the first element
             return response.docs.map(doc => { return { uid: doc.id, ...(doc.data() as User_msg) }; });
         } catch (error) {
             let message = "Error Saving Information into Firestore";

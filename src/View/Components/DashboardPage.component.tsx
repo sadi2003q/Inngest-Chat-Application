@@ -1,7 +1,7 @@
 
 import {Clock, MessageSquare, Plus, Search} from "lucide-react";
 import type {EmptyListProps, FilterProps, MessageActionsProps, SearchBarProps, User_msg} from "../../Others/utilities.ts";
-import { Archive, Trash2, MoreVertical } from "lucide-react";
+import { Archive, Trash2, MoreVertical, Play } from "lucide-react";
 import type {PaginationProps} from "../../Others/utilities.ts";
 import { Link } from 'react-router-dom'
 
@@ -98,39 +98,48 @@ export const DashboardPage_MessageList = ({message}: {message: User_msg}) => {
 }
 
 
-export const MessageActions = ({ messageId, onAction }: MessageActionsProps) => {
+export const MessageActions = ({ messageId, onAction, onArchive, onDelete, onMore }: MessageActionsProps) => {
     return (
-        <div className="flex items-start gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-start gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+            <button
+                className="p-2 text-[#475467] hover:text-[#FF5A1F] hover:bg-[#FEF3F2] rounded-lg transition-all"
+                title="Go"
+                onClick={() => onAction(messageId)}
+            >
+                <Play className="w-5 h-5"/>
+            </button>
+
             <button
                 className="p-2 text-[#475467] hover:text-[#FF5A1F] hover:bg-[#FEF3F2] rounded-lg transition-all"
                 title="Archive"
-                onClick={() => onAction(messageId)}
+                onClick={() => onArchive(messageId)}
             >
-                <Archive className="w-5 h-5" />
+                <Archive className="w-5 h-5"/>
             </button>
 
             <button
                 className="p-2 text-[#475467] hover:text-[#B42318] hover:bg-[#FEF3F2] rounded-lg transition-all"
                 title="Delete"
-                onClick={() => onAction(messageId)}
+                onClick={() => onDelete(messageId)}
             >
-                <Trash2 className="w-5 h-5" />
+                <Trash2 className="w-5 h-5"/>
             </button>
 
             <button
                 className="p-2 text-[#475467] hover:text-[#101828] hover:bg-[#F9FAFB] rounded-lg transition-all"
                 title="More options"
-                onClick={() => onAction(messageId)}
+                onClick={() => onMore()}
             >
-                <MoreVertical className="w-5 h-5" />
+                <MoreVertical className="w-5 h-5"/>
             </button>
+
         </div>
     );
 };
 
 
-
-export const DashboardPage_Footer = ()=> {
+export const DashboardPage_Footer = () => {
     return (
         <footer className="bg-white border-t border-[#F9FAFB] mt-20">
             <div className="max-w-[1400px] mx-auto px-6 py-8 text-center">

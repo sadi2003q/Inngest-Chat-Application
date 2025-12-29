@@ -15,7 +15,7 @@ export default function MessagesDashboard () {
 
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
-    const [selectedMessages, setSelectedMessages] = useState<number[]>([]);
+    // const [selectedMessages, setSelectedMessages] = useState<number[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [messageHeader, setMessageHeader] = useState<User_msg[]>(messages);
 
@@ -29,11 +29,7 @@ export default function MessagesDashboard () {
 
     // Controller Class
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const controller = new DashboardController({
-        setMessageHeader: setMessageHeader,
-    })
-
-
+    const controller = new DashboardController({ setMessageHeader: setMessageHeader, })
 
     const filteredMessages = messageHeader.filter(msg => {
         const matchesSearch = msg.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -42,20 +38,20 @@ export default function MessagesDashboard () {
         return matchesSearch && matchesFilter;
     });
 
-
-
     // This is the function responsible for taking the user to the specific conversation List
     const handleSelectMessage = (id: number) => {
-        console.log("Clicked");
-        setSelectedMessages(prev =>
-            prev.includes(id)
-                ? prev.filter(msgId => msgId !== id)
-                : [...prev, id]
-        );
-
-
-        console.log(selectedMessages);
+        // setSelectedMessages(prev =>
+        //     prev.includes(id)
+        //         ? prev.filter(msgId => msgId !== id)
+        //         : [...prev, id]
+        // );
+        navigate(`${Pages.ChatInterface}?cid=${id}`)
     };
+    const handleOnArchive = (id: number) => { console.log("Clicked : ", id); }
+    const handleOnDelete = (id: number) => { console.log("Clicked : ", id); }
+    const handleOnMore = () => { console.log("Clicked : "); }
+
+
 
     const handleNewMessage = async () => {
         if (!uid) return;
@@ -94,29 +90,21 @@ export default function MessagesDashboard () {
 
     useEffect(() => {
         if (!uid || hasFetched.current) return;
-
         hasFetched.current = true; // Mark as executed
-
-        const load = async () => {
-            await controller.fetchAllMessageList({ id: uid })
-        };
-
+        const load = async () => { await controller.fetchAllMessageList({ id: uid }) };
         load().then();
     }, [controller, uid]);
+
 
 
     return (
         <div className="min-h-screen bg-[#F9FAFB]">
 
-
             {/* Header */}
             <Dashboard_NavigationBar  SignOutFunction={SignOut_Function}/>
 
-
             {/* Main Content */}
             <main className="max-w-[1400px] mx-auto px-6 py-12">
-
-
 
                 {/* Page Header */}
                 <DashboardPage_Heading />
@@ -125,14 +113,11 @@ export default function MessagesDashboard () {
                 <div className="bg-white rounded-lg border border-[#D0D5DD] p-6 mb-6">
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
 
-
                         {/* Search */}
                         <SearchBar
                             searchQuery={searchQuery}
                             onSearchChange={setSearchQuery}
                         />
-
-
 
                         {/* Filter & Actions */}
                         <MessageFilter
@@ -140,7 +125,6 @@ export default function MessagesDashboard () {
                             onFilterChange={changeFilter}
                             onNewMessage={handleNewMessage}
                         />
-
 
                     </div>
                 </div>
@@ -156,22 +140,23 @@ export default function MessagesDashboard () {
                                 key={message.id}
                                 className="bg-white rounded-lg border border-[#D0D5DD] hover:border-[#FF5A1F] transition-all hover:shadow-md cursor-pointer group"
                             >
+
+
                                 <div className="p-6">
                                     <div className="flex items-start justify-between gap-4">
-
-
 
                                         {/* Main Content */}
                                         <DashboardPage_MessageList message={message} />
 
-
                                         {/* Actions */}
                                         <MessageActions
-                                            messageId={message.id}
+                                            messageId={message.uid}
                                             onAction={handleSelectMessage}
+                                            onArchive={handleOnArchive}
+                                            onDelete={handleOnDelete}
+                                            onMore={handleOnMore}
+
                                         />
-
-
                                     </div>
                                 </div>
                             </div>

@@ -67,7 +67,9 @@ export default function ChatInterface() {
         // Stream AI structured response
         // await controller.getAnswerStream({question: textFieldMessage})
         // Simulate AI response
+        if(cid) console.log("cid", cid);
         if(cid && uid) await controller.getAnswer({question: textFieldMessage, id: uid, cid: cid});
+
     }
 
 
@@ -81,12 +83,15 @@ export default function ChatInterface() {
 
         if(!cid) navigate(Pages.Dashboard)
 
-        console.log("CID : ", cid);
-
-        controller.getAllConversation_text({
-            id: "LFDQSylp5wUog1kt7tEOG4xTAxx2",
-            cid: cid ?? "1234",
-        }).then();
+        if(uid && cid)
+            controller.getAllConversation_text({
+                id: uid,
+                cid: cid ?? "1234",
+            }).then();
+        else {
+            if(uid) console.log("UID : ", uid)
+            if(cid) console.log("CID: ", cid);
+        }
     }, []);
 
 
