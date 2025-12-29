@@ -102,7 +102,7 @@ export class ChatController {
             await this.updateConversationInformation({
                 id: id,
                 cid:  cid,
-                lastMessage: this.formatLastMessage(JSON.stringify(demoResponse)),
+                lastMessage: this.formatLastMessage(JSON.stringify(demoResponse.heading)),
             })
 
 
@@ -359,8 +359,9 @@ ${question}
         });
     }
     formatLastMessage = (text: string): string => {
-        if (text.length <= 45) return text;
-        return text.slice(0, 45) + "...";
+        const sanitized = text.replace(/"/g, "");
+        if (sanitized.length <= 65) return sanitized;
+        return sanitized.slice(0, 65) + "...";
     };
 
 

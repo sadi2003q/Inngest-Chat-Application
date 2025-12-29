@@ -41,6 +41,10 @@ export default function MessagesDashboard () {
         const matchesFilter = filterStatus === 'all' || msg.status === filterStatus;
         return matchesSearch && matchesFilter;
     });
+
+
+
+    // This is the function responsible for taking the user to the specific conversation List
     const handleSelectMessage = (id: number) => {
         console.log("Clicked");
         setSelectedMessages(prev =>

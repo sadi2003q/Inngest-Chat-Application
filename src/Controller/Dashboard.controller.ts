@@ -17,9 +17,7 @@ export class DashboardController{
 
     fetchAllMessageList = async ({id}: {id: string}) => {
         try {
-            console.log("ID : ", id);
             const response = await this.server.getAllConversationList({id});
-            console.log("Response : ", response);
             this.setMessageHeader(response);
         } catch (error) {
             if(error instanceof Error){
