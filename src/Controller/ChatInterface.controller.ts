@@ -1,6 +1,6 @@
 // File: src/chat_controller.ts
 
-import {aiResponse, aiResponseStream, ConversationName, generateSummary} from "../Gemini/GeminiResponse.ts";
+import {aiResponseStream, ConversationName, generateSummary} from "../Gemini/GeminiResponse.ts";
 import type {AIResponse, Message} from "../Model/model.aiResponse.ts";
 import React from "react";
 import {type ConversationMessage, demoResponse, SYSTEM_PROMPT} from "../Others/utilities.ts";
@@ -58,16 +58,13 @@ export class ChatController {
 
             this.setMessages((prev) => [...prev, userMessage]);
             this.setIsLoading(true) // Loading Starts
-
-
-
-
             // 2️⃣ Call AI (replace aiResponse with your actual API call)
-            const prompt = this.buildContextPrompt(question);
-            const response: AIResponse = await aiResponse({ question: prompt });
+            // const prompt = this.buildContextPrompt(question);
+            // const response: AIResponse = await aiResponse({ question: prompt });
             // console.log(response);
             // this.wait(2000) // Simulate Ai response waiting time.
 
+            // Add User Question to Database
             await this.addToDatabase({
                 id: id,
                 cid:  cid,
@@ -75,29 +72,40 @@ export class ChatController {
                 count: this.messages().length,
                 isUser: true
             })
-
-
             // 3️⃣ Add AI structured message
             const aiMessage: Message = {
                 type: "ai-structured",
                 data: demoResponse,
             };
             this.setMessages((prev) => [...prev, aiMessage]);
-
-            // await this.addToDatabase({
-            //     id: "LFDQSylp5wUog1kt7tEOG4xTAxx2",
-            //     cid: Date.now().toString(),
-            //     message: demoResponse,
-            //     count: 0,
-            //     isUser: false
-            // })
+            // Add Ai response to Database
             await this.addToDatabase({
                 id: id,
                 cid:  cid,
-                message: JSON.stringify(response) ,
+                message: JSON.stringify(demoResponse) ,
                 count: this.messages().length+1,
                 isUser: false
             })
+            // Update Conversation Name
+            await this.updateConversationName({
+                id: id,
+                cid:  cid,
+            })
+            // Update Conversation Summary
+            await this.updateConversationSummary({
+                id: id,
+                cid:  cid,
+                question: question,
+                finalResponse: demoResponse
+            })
+            // Update Conversation Outer Box
+            await this.updateConversationInformation({
+                id: id,
+                cid:  cid,
+                lastMessage: this.formatLastMessage(JSON.stringify(demoResponse)),
+            })
+
+
 
         } catch (error) {
             console.log(error)
@@ -111,13 +119,23 @@ export class ChatController {
 
         return { success: false };
     };
-    getAnswerStream = async ({ question }: { question: string }) => {
+    getAnswerStream = async ({ question, id, cid }: { question: string, id: string, cid: string}) => {
 
         if(!question.trim()) return { success: false, error: {message: "Empty question"} };
         const userQuestion : Message= {
             type: "user",
             text: question,
         }
+
+
+        // Update Question to the Database
+        await this.addToDatabase({
+            id: id,
+            cid:  cid,
+            message: question,
+            count: this.messages().length,
+            isUser: true
+        })
 
         this.setMessages((prev) => [...prev, userQuestion]);
 
@@ -149,30 +167,37 @@ export class ChatController {
              )
 
             // Removed Stream raw Text with Structured Output
-            this.setMessages(prev =>
-                prev.filter(m => m.type !== 'ai-stream').concat({
+            this.setMessages(prev =>  prev.filter(m => m.type !== 'ai-stream').concat({
                     type: "ai-structured",
                     data: finalResponse,
-                })
-            )
-
-
-            if (
-                this.messages().length == 5
-                || this.messages().length==20
-                || this.messages().length==50
-            )  await this.makeConversationName();
-
-
-            // generate Summary
-            const summary = await generateSummary({
-                conversationSummary: this.conversationSummary,
+                }) )
+            // Update Response to Database
+            await this.addToDatabase({
+                id: id,
+                cid:  cid,
+                message: finalResponse,
+                count: this.messages().length,
+                isUser: true
+            })
+            // Update Conversation Name
+            await this.updateConversationName({
+                id: id,
+                cid:  cid,
+            })
+            // Update Conversation Summary
+            await this.updateConversationSummary({
+                id: id,
+                cid:  cid,
                 question: question,
-                finalText: finalResponse
-
+                finalResponse: finalResponse
+            })
+            // Update Conversation Outer Box
+            await this.updateConversationInformation({
+                id: id,
+                cid:  cid,
+                lastMessage: this.formatLastMessage(JSON.stringify(finalResponse)),
             })
 
-            this.setConversationSummary(summary);
 
         } catch (error) {
 
@@ -193,6 +218,7 @@ export class ChatController {
             })
 
             this.setConversationHeading(name);
+            return name;
 
         } catch(error) {
             let errorText = "Something went wrong";
@@ -243,9 +269,55 @@ export class ChatController {
             console.log("Saved to Database")
         } catch (error) { if(error instanceof Error)  this.handleError(error); }
     }
+    updateConversationName = async({id, cid}: {id: string, cid: string}) => {
+        try {
+            if (
+                this.messages().length == 5
+                || this.messages().length==20
+                || this.messages().length==50
+            ) {
+                const name = await this.makeConversationName();
+                if(name) await this.server.updateName({id: id, cID: cid, name: name})
+                else console.log("Name is not Found || No name to be Updated");
+            } else return;
+        } catch (error) {
+            if(error instanceof Error) {
+                console.error(error.message);
+            }
+        }
+    }
+    updateConversationSummary = async({id, cid, question, finalResponse}: {id: string, cid: string, question: string, finalResponse: unknown}) => {
+        try {
+            const summary = await generateSummary({
+                conversationSummary: this.conversationSummary,
+                question: question,
+                finalText: finalResponse as string
 
-
-
+            })
+            this.setConversationSummary(summary); // set Summary for context
+            await this.server.updateSummary({
+                id: id,
+                cID:  cid,
+                summary: JSON.stringify(summary),
+            }) // Update summary for Database
+        } catch (error) {
+            if(error instanceof Error) {
+                console.error(error.message);
+            }
+        }
+    }
+    updateConversationInformation = async({id, cid, lastMessage}: {id: string, cid: string, lastMessage: unknown}) => {
+        try {
+            await this.server.updateMessageList({
+                id: id,
+                cID: cid,
+                lastMessage: lastMessage as string,
+                lastMessage_time: new Date(),
+            })
+        } catch (error) {
+            if(error instanceof Error) console.error(error.message);
+        }
+    }
 
 
 
@@ -286,6 +358,10 @@ ${question}
             return [...newMessages]; // optionally add the error message
         });
     }
+    formatLastMessage = (text: string): string => {
+        if (text.length <= 45) return text;
+        return text.slice(0, 45) + "...";
+    };
 
 
 }

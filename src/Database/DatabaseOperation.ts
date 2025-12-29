@@ -18,7 +18,6 @@ export class DatabaseOperation {
 
 
     // ***  User Information Related Query  ***
-
     Save_UserInformation = async ({userInformation, id} : {
         userInformation: UserInformation,
         id: string
@@ -76,7 +75,6 @@ export class DatabaseOperation {
 
 
     // ***  All conversation Related Query  ***
-
     createNewConversation = async ({id, messageHeader}: {id: string, messageHeader: All_Messages}) => {
         try {
 
@@ -97,16 +95,11 @@ export class DatabaseOperation {
 
     getAllConversationList = async ({id}: {id: string}) => {
         try {
-            const ref = collection(db, DatabaseName.UserDatabase, id);
+            const ref = collection(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list);
             const response = await getDocs(ref);
 
             // Map through documents and include the UID as the first element
-            return response.docs.map(doc => {
-                return { uid: doc.id, ...(doc.data() as User_msg) };
-            });
-
-
-
+            return response.docs.map(doc => { return { uid: doc.id, ...(doc.data() as User_msg) }; });
         } catch (error) {
             let message = "Error Saving Information into Firestore";
             if(error instanceof Error) {
@@ -213,6 +206,21 @@ export class DatabaseOperation {
         }
     }
 
+    updateName = async ({id, cID, name}: {id: string, cID: string, name: string}) => {
+        try {
+            const ref = doc(db, DatabaseName.UserDatabase, id, DatabaseName.AllChats_list, cID)
+            await updateDoc(ref, {
+                name: name,
+            });
+        } catch (error) {
+            let message = "Error Saving Information into Firestore";
+            if(error instanceof Error) {
+                message = error.message;
+            }
+
+            throw new Error(message);
+        }
+    }
 }
 
 // const database = new DatabaseOperation();

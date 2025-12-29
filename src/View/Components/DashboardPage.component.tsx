@@ -7,11 +7,9 @@ import { Link } from 'react-router-dom'
 
 
 
-export const Dashboard_NavigationBar = ({
-                                            SignOutFunction,
-                                        }: {
-    SignOutFunction: () => void;
-}) => {
+export const Dashboard_NavigationBar = (
+{ SignOutFunction }: { SignOutFunction: () => void; }
+) => {
     return (
         <header className="bg-white border-b border-[#F9FAFB] sticky top-0 z-50">
             <div className="max-w-[1400px] mx-auto px-6 py-5">
@@ -52,7 +50,7 @@ export const DashboardPage_Heading = ()=> {
 
 
 export const DashboardPage_EmptyList = (
-    { makeNewFunction }: EmptyListProps
+{ makeNewFunction }: EmptyListProps
 ) => {
     return (
         <div className="bg-white rounded-lg border border-[#D0D5DD] p-16 text-center">

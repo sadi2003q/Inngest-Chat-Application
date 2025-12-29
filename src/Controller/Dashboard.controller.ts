@@ -10,19 +10,17 @@ export class DashboardController{
     private readonly server = new DatabaseOperation();
 
 
-    constructor({setMessageHeader}: {
-        setMessageHeader: React.Dispatch<React.SetStateAction<User_msg[]>>
+    constructor({setMessageHeader}: { setMessageHeader: React.Dispatch<React.SetStateAction<User_msg[]>>
     }){
         this.setMessageHeader = setMessageHeader;
     }
 
-
     fetchAllMessageList = async ({id}: {id: string}) => {
         try {
-
+            console.log("ID : ", id);
             const response = await this.server.getAllConversationList({id});
+            console.log("Response : ", response);
             this.setMessageHeader(response);
-
         } catch (error) {
             if(error instanceof Error){
                 console.log(error.message);
