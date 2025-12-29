@@ -63,10 +63,10 @@ export class ChatController {
 
 
             // 2️⃣ Call AI (replace aiResponse with your actual API call)
-            // const prompt = this.buildContextPrompt(question);
-            // const response: AIResponse = await aiResponse({ question: prompt });
+            const prompt = this.buildContextPrompt(question);
+            const response: AIResponse = await aiResponse({ question: prompt });
             // console.log(response);
-            this.wait(2000) // Simulate Ai response waiting time.
+            // this.wait(2000) // Simulate Ai response waiting time.
 
             await this.addToDatabase({
                 id: "LFDQSylp5wUog1kt7tEOG4xTAxx2",
@@ -94,7 +94,7 @@ export class ChatController {
             await this.addToDatabase({
                 id: "LFDQSylp5wUog1kt7tEOG4xTAxx2",
                 cid:  "1234",
-                message: JSON.stringify(demoResponse) ,
+                message: JSON.stringify(response) ,
                 count: 0,
                 isUser: false
             })

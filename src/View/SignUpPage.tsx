@@ -12,9 +12,10 @@ import {
     Button_CreateAccount, Footer_Signup, Signup_Link,
     SignupStatus_View
 } from './Components/SignupPage.component.tsx'
-import type { user_info, SignupStatus} from "../Others/utilities.ts";
+import {type user_info, type SignupStatus, Pages} from "../Others/utilities.ts";
 import {SignUpController} from "../Controller/SignUp.controller.ts";
 import {useAuth} from "../AuthContext.tsx";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -32,15 +33,18 @@ export default function SignupPage() {
         info: {
             firstName: "",
             lastName: "",
-            email: "",
+            email: "Adnan@gmail.com",
             api: "",
             terms: false
         },
-        password: ""
+        password: "$North_qBit12--QuAnTaUM"
     });
 
     // Global Context
     const { setUid, setUserName } = useAuth();
+
+    // Navigation
+    const navigate = useNavigate();
 
 
 
@@ -78,6 +82,9 @@ export default function SignupPage() {
             const uid = await controller.SignUp();
             if(uid) setUid(uid);
             setUserName(formData.info.firstName + " " + formData.info.lastName);
+
+            // if Signup is Successful than Navigate to Dashboard
+            navigate(Pages.Dashboard)
         }
         catch (error) { if(error instanceof Error) console.log(error.message); }
     };

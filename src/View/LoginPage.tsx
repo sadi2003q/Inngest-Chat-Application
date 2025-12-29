@@ -8,9 +8,10 @@ import {
     SignupHeading,
     SignupUP_SocialMedia, SuccessStatus
 } from "./Components/LoginPage.component.tsx";
-import { type LoginStatus, type loginInterface } from "../Others/utilities.ts";
+import { type LoginStatus, type loginInterface, Pages } from "../Others/utilities.ts";
 import {LoginController} from "../Controller/Login.controller.ts";
 import {useAuth} from "../AuthContext.tsx";
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -19,11 +20,14 @@ export default function LoginPage() {
 
 
     // User Information and Status
-    const [formData, setFormData] = useState<loginInterface>({ email: '', password: '', remember: false }); //
+    const [formData, setFormData] = useState<loginInterface>({ email: 'Adnan@gmail.com', password: '$North_qBit12--QuAnTaUM', remember: false }); //
     const [status, setStatus] = useState<LoginStatus>({  type: null, message: "" });
 
     // Global Context
     const { setUid } = useAuth();
+
+    // Navigation Variable
+    const navigate = useNavigate();
 
     // Controller class
     const controller = new LoginController({
@@ -42,8 +46,17 @@ export default function LoginPage() {
     };
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const uid = await controller.login();
-        if(uid) setUid(uid);
+        try {
+            const uid = await controller.login();
+            if(uid) setUid(uid);
+
+            // if Login Successful than move to Dashboard
+            navigate(Pages.Dashboard)
+
+        } catch (error) { if (error instanceof Error) console.log(error.message); }
+
+
+
     };
 
 
@@ -70,6 +83,8 @@ export default function LoginPage() {
 
                     {/*  Form  */}
                     <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+
+                        {/*  Email Field */}
                         <div className="flex flex-col gap-2">
                             <label htmlFor="email" className="text-sm font-medium text-[#101828]">Email address</label>
                             <input
@@ -83,7 +98,7 @@ export default function LoginPage() {
                             />
                         </div>
 
-
+                        {/*  Password Field*/}
                         <div className="flex flex-col gap-2">
                             <label htmlFor="password" className="text-sm font-medium text-[#101828]">Password</label>
                             <input
@@ -97,6 +112,7 @@ export default function LoginPage() {
                             />
                         </div>
 
+                        {/* Forget password */}
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 -mt-2">
                             <div className="flex items-center gap-2 cursor-pointer">
                                 <input
@@ -113,6 +129,7 @@ export default function LoginPage() {
                             </a>
                         </div>
 
+                        {/*  Login Button */}
                         <LoginButton/>
                     </form>
 

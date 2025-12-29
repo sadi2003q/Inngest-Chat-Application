@@ -46,10 +46,12 @@ export default function MessagesDashboard () {
 
         console.log(selectedMessages);
     };
+
     const handleNewMessage = () => {
         // navigate to Chat page or create a new message entry
         console.log("Creating a new message...");
     };
+
     const handlePageClick = (page: number) => {
         setCurrentPage(page);
         console.log("Go to Page:", currentPage);
@@ -112,7 +114,7 @@ export default function MessagesDashboard () {
                             filterStatus={filterStatus}
                             onFilterChange={changeFilter}
                             onNewMessage={handleNewMessage}
-                        />;
+                        />
 
 
                     </div>

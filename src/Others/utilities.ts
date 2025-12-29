@@ -413,7 +413,12 @@ export interface ConversationMessage {
     isUser: boolean;
 }
 
-
+export const Pages = {
+    Signup: "/signup",
+    Login: "/login",
+    Dashboard: "/dashboard",
+    ChatInterface: "/chat"
+} as const;
 
 
 
