@@ -102,7 +102,11 @@ export const DashboardPage_MessageList = ({ message }: { message: any }) => {
             <div className="flex items-center gap-6 text-sm text-[#98A2B3]">
                 <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4" />
-                    <span>{formatDate(message.lastMessage_time)}</span>
+                    <span>
+                        {message.timestamp
+                            ? message.timestamp
+                            : formatDate(message.lastMessage_time)}
+                    </span>
                 </div>
 
                 <div className="flex items-center gap-2">

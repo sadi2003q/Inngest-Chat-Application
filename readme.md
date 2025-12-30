@@ -43,9 +43,19 @@ Whether you're a developer looking to understand AI integration, event-driven ar
 ### 📸 Screenshot
 
 *A glimpse into the application's interface.*
-![App Screenshot](https://via.placeholder.com/800x500.png?text=Inngest+Chat+Application+UI)
+### Sign up Page
+![SignUp Page](./ScreenShorts/Inngest_chatBot_SignUpPage.png)
 
----
+### Login Page
+![Login Page](./ScreenShorts/Inngest_chatBot_LoginPage.png)
+
+### Dashboard Page
+![Dashboard](./ScreenShorts/Inngest_chatBot_DashboardPage1.png)
+![Dashboard](./ScreenShorts/Inngest_chatBot_DashboardPage2.png)
+
+### Chat Interface
+![Screenshot 4](./ScreenShorts/Inngest_chatBot_ChatInterfacePage.png)
+
 
 ## ✨ Features
 
