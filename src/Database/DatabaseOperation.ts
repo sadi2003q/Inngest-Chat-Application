@@ -64,7 +64,7 @@ export class DatabaseOperation {
         }
     }
     /**
-     * Fetch User Information From Firestore (not Implemented)
+     * Fetch User Information From Firestore
      * @param id : string user ID
      */
     getUserInformation = async ({id}: {id: string}) => {

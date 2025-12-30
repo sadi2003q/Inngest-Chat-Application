@@ -19,7 +19,7 @@ export default function MessagesDashboard () {
     const [messageHeader, setMessageHeader] = useState<User_msg[]>(messages);
 
     // Global Context
-    const { uid } = useAuth();
+    const { uid, setApiKey } = useAuth();
 
     // Routing Variable
     const navigate = useNavigate();
@@ -89,7 +89,14 @@ export default function MessagesDashboard () {
         if (!uid || hasFetched.current) return;
         hasFetched.current = true; // Mark as executed
         const load = async () => { await controller.fetchAllMessageList({ id: uid }) };
+        const fetchInformation = async () => {await controller.fetchUserInformation({ id: uid }) };
         load().then();
+        fetchInformation().then(response => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            setApiKey(response);
+        });
+
     }, [controller, uid]);
 
     return (
@@ -131,6 +138,8 @@ export default function MessagesDashboard () {
                     {filteredMessages.length === 0 ? <DashboardPage_EmptyList  makeNewFunction={handleNewMessage} /> : (
 
                         filteredMessages.map((message) => (
+
+
                             <div
                                 key={message.uid}
                                 className="bg-white rounded-lg border border-[#D0D5DD] hover:border-[#FF5A1F] transition-all hover:shadow-md cursor-pointer group"

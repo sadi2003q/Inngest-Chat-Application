@@ -1,9 +1,10 @@
 
 import {Clock, MessageSquare, Plus, Search} from "lucide-react";
-import type {EmptyListProps, FilterProps, MessageActionsProps, SearchBarProps, User_msg} from "../../Others/utilities.ts";
+import type {EmptyListProps, FilterProps, MessageActionsProps, SearchBarProps} from "../../Others/utilities.ts";
 import { Archive, Trash2, MoreVertical, Play } from "lucide-react";
 import type {PaginationProps} from "../../Others/utilities.ts";
 import { Link } from 'react-router-dom'
+import { Timestamp } from "firebase/firestore";
 
 
 
@@ -67,35 +68,51 @@ export const DashboardPage_EmptyList = (
 }
 
 
-export const DashboardPage_MessageList = ({message}: {message: User_msg}) => {
+export const DashboardPage_MessageList = ({ message }: { message: any }) => {
+
+    const formatDate = (ts?: Timestamp) => {
+        if (!ts) return "Unknown";
+        const date = ts.toDate();
+        return date.toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
+
     return (
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 group">
             <div className="flex items-center gap-3 mb-2">
                 <h3 className="text-xl font-semibold text-[#101828] truncate group-hover:text-[#FF5A1F] transition-colors">
-                    {message.title}
+                    {message.title || "Untitled Chat"}
                 </h3>
-                {message.status === 'archived' && (
-                    <span className="px-2.5 py-1 bg-[#F9FAFB] text-[#475467] text-xs font-medium rounded-md"> Archived </span>
+
+                {message.isArchived && (
+                    <span className="px-2.5 py-1 bg-[#F9FAFB] text-[#475467] text-xs font-medium rounded-md">
+                        Archived
+                    </span>
                 )}
             </div>
 
             <p className="text-[#475467] mb-4 line-clamp-2 leading-relaxed">
-                {message.lastMessage}
+                {message.lastMessage || "No messages yet"}
             </p>
 
             <div className="flex items-center gap-6 text-sm text-[#98A2B3]">
                 <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4" />
-                    <span>{message.timestamp}</span>
+                    <span>{formatDate(message.lastMessage_time)}</span>
                 </div>
+
                 <div className="flex items-center gap-2">
                     <MessageSquare className="w-4 h-4" />
-                    <span>{message.messageCount} messages</span>
+                    <span>{message.messageCount || 0} messages</span>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 
 export const MessageActions = ({ messageId, onAction, onArchive, onDelete, onMore }: MessageActionsProps) => {

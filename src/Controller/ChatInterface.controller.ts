@@ -55,7 +55,7 @@ export class ChatController {
      * @param id : string User ID
      * @param cid : string Conversation ID
      */
-    getAnswer = async ({ question, id, cid }: { question: string, id: string, cid: string }) => {
+    getAnswer = async ({ question, id, cid }: { question: string, id: string, cid: string, api?:string }) => {
         if (!question.trim()) return { success: false, error: "Empty question" };
 
         try {
@@ -133,8 +133,9 @@ export class ChatController {
      * @param question : string user Query
      * @param id : string user ID
      * @param cid : string Conversation ID
+     * @param apiKey : string Gemini Api Key
      */
-    getAnswerStream = async ({ question, id, cid }: { question: string, id: string, cid: string}) => {
+    getAnswerStream = async ({ question, id, cid, apiKey }: { question: string, id: string, cid: string, apiKey: string}) => {
 
         if(!question.trim()) return { success: false, error: {message: "Empty question"} };
         const userQuestion : Message= {
@@ -170,7 +171,7 @@ export class ChatController {
             const prompt = this.buildContextPrompt(question);
 
             //Stream Text
-            const finalResponse = await aiResponseStream({question: prompt},
+            const finalResponse = await aiResponseStream({question: prompt, apiKey: apiKey},
                 (chunk) => {
                     streamText+=chunk;
                     this.setMessages(prev =>

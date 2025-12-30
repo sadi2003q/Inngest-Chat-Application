@@ -13,7 +13,7 @@ const ai = new GoogleGenAI({
  * @param question : string User Question
  */
 export const aiResponse = async ({
- question,
+   question,
 }: {
     question: string;
 }): Promise<AIResponse> => {
@@ -61,13 +61,17 @@ const cleanJunkFromText = ({text} : {text: string}) => {
  * Generate Streaming Response from Gemini
  * @param question : User Question
  * @param onChunk
+ * @param apiKey: string
  */
 export const aiResponseStream = async (
-    { question }: { question: string },
+    { question, apiKey }: { question: string, apiKey: string },
     onChunk: (partialText: string) => void
 ) => {
 
-    const stream = await ai.models.generateContentStream({
+    const client = new GoogleGenAI({
+        apiKey: apiKey ?? GEMINI_secret,
+    });
+    const stream = await client.models.generateContentStream({
         model: "gemini-2.5-flash",
         contents: [{
             role: "user",

@@ -47,7 +47,7 @@ export default function ChatInterface() {
 
     const [searchParams] = useSearchParams();
     const cid = searchParams.get("cid"); // string | null
-    const { uid } = useAuth();
+    const { uid, apiKey } = useAuth();
 
 
 
@@ -65,10 +65,10 @@ export default function ChatInterface() {
         setTextFieldMessage("");
 
         // Stream AI structured response
-        // await controller.getAnswerStream({question: textFieldMessage})
+        if(apiKey && cid && uid) await controller.getAnswerStream({question: textFieldMessage, apiKey: apiKey, cid: cid, id: uid})
         // Simulate AI response
-        if(cid) console.log("cid", cid);
-        if(cid && uid) await controller.getAnswer({question: textFieldMessage, id: uid, cid: cid});
+        // if(cid) console.log("cid", cid);
+        // if(cid && uid) await controller.getAnswer({question: textFieldMessage, id: uid, cid: cid});
 
     }
 

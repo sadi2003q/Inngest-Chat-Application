@@ -41,7 +41,7 @@ export default function SignupPage() {
     });
 
     // Global Context
-    const { setUid, setUserName } = useAuth();
+    const { setUid, setUserName, setApiKey } = useAuth();
 
     // Navigation
     const navigate = useNavigate();
@@ -83,6 +83,7 @@ export default function SignupPage() {
             setUserName(formData.info.firstName + " " + formData.info.lastName);
 
             // if Signup is Successful than Navigate to Dashboard
+            setApiKey(formData.info.api);
             navigate(Pages.Dashboard)
         }
         catch (error) { if(error instanceof Error) console.log(error.message); }

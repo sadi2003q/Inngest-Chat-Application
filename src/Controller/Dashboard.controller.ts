@@ -31,6 +31,20 @@ export class DashboardController{
         }
     }
     /**
+     * Fetch Current user Information From Firestore
+     * @param id
+     */
+    fetchUserInformation = async ({id}: {id: string}) => {
+        try {
+            const info = await this.server.getUserInformation({id});
+            const userInformation = info.data();
+            if(userInformation)  return userInformation.api;
+
+        } catch (error) {
+            if(error instanceof Error) console.log(error.message);
+        }
+    }
+    /**
      * Create new Conversation On the Database
      * @param id : string User ID
      * @param conversation : All_Messages Starter Conversation kit
@@ -60,9 +74,6 @@ export class DashboardController{
             }
         }
     }
-
-
-
 
 
 }
