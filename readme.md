@@ -122,7 +122,7 @@ Make sure you have the following software installed:
 
 1.  **Clone the Repository**
     ```bash
-    git clone https://github.com/your-username/inngest-chat-application.git
+    git clone https://github.com/sadi2003q/Inngest-Chat-Application.git
     cd inngest-chat-application
     ```
 
@@ -176,19 +176,6 @@ To run the application, you'll need to start the frontend, backend, and Inngest 
     ```
     Your application will be available at `http://localhost:5173`.
 
--   **Terminal 2: Start the Backend (Express)**
-    This command starts the Express server that hosts your Inngest functions.
-    ```bash
-    npm run backend
-    ```
-    This server runs on port `8080` by default.
-
--   **Terminal 3: Start the Inngest Dev Server**
-    This command starts the local Inngest development server, which provides a UI for inspecting events and function runs.
-    ```bash
-    npm run inngest
-    ```
-    The Inngest dev server is available at `http://localhost:8288`.
 
 ### Available Scripts
 
@@ -270,6 +257,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ---
 
 <div align="center">
-  <p>Made with ❤️ by the community</p>
+  <p>Made with ❤️ Adnan Abdullah Sadi</p>
 </div>
 
